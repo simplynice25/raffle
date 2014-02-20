@@ -4,6 +4,10 @@ Go to raffle folder > application > views > include
 Database location:
 Go to raffle folder > developer > database
 
+Github download raffle file:
+https://github.com/simplynice25/raffle
+Download Zip ( bottom right )
+
 Credentials:
 admin@raffle.com
 password
