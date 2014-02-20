@@ -1,0 +1,9 @@
+How to edit about / contact / terms / home:
+Go to raffle folder > application > views > include
+
+Database location:
+Go to raffle folder > developer > database
+
+Credentials:
+admin@raffle.com
+password
