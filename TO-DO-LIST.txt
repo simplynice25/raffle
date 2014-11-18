@@ -1,0 +1,25 @@
+RAFFLE
+
+TO-DO-LIST:
+	
+	DECEMBER: 50% ( User )
+	- Homepage
+	- About Us
+	- Registration -> ( User Profile )
+	- Login
+	- Edit Profile
+	- Forgot Password
+	
+	MID JANUARY: 80% ( Raffle Configuration/Settings | CRUD ( Create / Read / Update / Delete) users )
+	- Prizes ( Amount )
+	- Assign Prizes
+	- Winners
+	- Consolations
+	- Clients / Encoder / Administrator
+	
+	END OF JANUARY: 100% ( Raffle Functions )
+	- Raffle draw page
+	
+	
+	charlottegatchalian20@gmail.com
+	rommel4693

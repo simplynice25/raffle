@@ -1,0 +1,83 @@
+/* CSS Document */
+
+/* Actions Btn */
+.show-btn {
+	margin-bottom: 20px
+}
+.sign-out-btn {
+	color: #FFF;
+	background-color: #ACACAC
+}
+	.sign-out-btn:hover {
+		color: #FFF;
+		background-color: #7A7A7A
+	}
+
+/* Table */
+.table, .table th {
+	font-size: 12px;
+	text-align: center;
+}
+.main-table .header:hover {
+	color: #FFF;
+	cursor: pointer;
+	background-color: #5bc0de
+}
+.main-table .header.headerSortUp {
+	color: #FFF;
+	background-color: #0A82D9
+	/*
+	background-image: none;
+	background-image: url("../img/sortable/asc.gif");
+	*/
+}
+.main-table .header.headerSortDown {
+	color: #FFF;
+	background-color: #5bc0de
+	/*
+	background-image: none;
+	background-image: url("../img/sortable/desc.gif");
+	*/
+}
+
+.scraped-table-yest {
+	margin-top: 50px
+}
+
+.abbr {
+	cursor: pointer
+}
+.summ-danger, .summ-success, .summ-neutral {
+	color: #FFF;
+	cursor: default;
+}
+.summ-danger span, .summ-success span, .summ-neutral span {
+	font-size:10px;
+}
+.summ-neutral {
+	background-color: #ACACAC
+}
+	.summ-neutral:hover {
+		background-color: #7A7A7A
+	}
+.summ-danger {
+	background-color: #d9534f;
+}
+	.summ-danger:hover {
+		background-color: #c9302c
+	}
+.summ-success {
+	background-color: #5cb85c
+}
+	.summ-success:hover {
+		background-color: #449d44
+	}
+.red-txt {
+	color: #FF0004;
+}
+.green-txt {
+	color: #00D504
+}
+.black-txt {
+	color: #000
+}
