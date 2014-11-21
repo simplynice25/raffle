@@ -3,12 +3,12 @@ RAFFLE
 TO-DO-LIST:
 	
 	DECEMBER: 50% ( User )
-	- Homepage
+	- Homepage - DONE
 	- About Us
-	- Registration -> ( User Profile )
-	- Login
+	- Registration -> ( User Profile ) - DONE
+	- Login - DONE
 	- Edit Profile
-	- Forgot Password
+	- Forgot Password - DONE
 	
 	MID JANUARY: 80% ( Raffle Configuration/Settings | CRUD ( Create / Read / Update / Delete) users )
 	- Prizes ( Amount )

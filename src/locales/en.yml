@@ -1,0 +1,5 @@
+#Reset Password
+reset_failed: Failed to send email for password reset.
+reset_sent: Email sent for password reset.
+invalid_reset_token: Link for password reset is invalid.
+reset_success: Password reset successful!

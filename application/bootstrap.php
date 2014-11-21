@@ -23,7 +23,7 @@ $app->register(new DerAlex\Silex\YamlConfigServiceProvider($database_conf));
 $app->register(new Silex\Provider\TranslationServiceProvider(), $trans_conf);
 $app['translator'] = $app->share($app->extend('translator', function($translator, $app) {
 	 $translator->addLoader('yaml', new YamlFileLoader());
-	 $translator->addResource('yaml', __DIR__.'/../src/locales/nl.yml', 'nl');
+	 $translator->addResource('yaml', __DIR__.'/../src/locales/en.yml', 'en');
 	 return $translator;
 }));
 
@@ -64,8 +64,9 @@ $app['swiftmailer.options'] = $mail_conf;
 
 $app['locale'] = 'en';
 
-$app->mount('/', general\UserLogin::routing($app));
+$app->mount('/', general\UserBridge::routing($app));
 $app->mount('/u', user\UserProvider::routing($app));
+$app->mount('/admin', admin\AdminProvider::routing($app));
 
 //echo $app['security.encoder.digest']->encodePassword('p@55w0rd','');
 

@@ -21,6 +21,9 @@ class Users {
 	/** @Column(type="string", nullable=true) **/
 	protected $roles;
 
+	/** @Column(type="string", nullable=true) **/
+	protected $token;
+
 	/** @Column(type="integer", nullable=true) **/
 	protected $view_status;
 
@@ -107,6 +110,29 @@ class Users {
     public function getRoles()
     {
         return $this->roles;
+    }
+
+    /**
+     * Set token
+     *
+     * @param string $token
+     * @return Users
+     */
+    public function setToken($token)
+    {
+        $this->token = $token;
+    
+        return $this;
+    }
+
+    /**
+     * Get token
+     *
+     * @return string 
+     */
+    public function getToken()
+    {
+        return $this->token;
     }
 
     /**

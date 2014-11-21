@@ -11,6 +11,7 @@
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet">
 	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
 	<style>
+		h1 { color: #FFF }
 		.registration-row {margin-top:50px}
 		body { background: url('http://www.wallpaperup.com/uploads/wallpapers/2013/04/10/73696/big_thumb_7876cbd598a352a01db4448a2226881e.jpg'); background-repeat: no-repeat;background-size: cover;background-color:#FFF}
 		.home-details .specifications p, .home-details .specifications h3 { color: #FFF }
@@ -31,6 +32,7 @@
 		
 	<!-- REG -->
 	<div class="col-lg-12">
+	<h1>Registration</h1>
 		<div class="panel panel-default" style="background-color: rgba(255, 255, 255, 0.7)">
 		  <div class="panel-body">
 			<form role="form" action="{{ path('registration-process') }}" method="POST">
@@ -84,7 +86,7 @@
 					<label for="address"><small>Address</small></label>
 					<textarea id="address" name="address" class="form-control" required></textarea>
 				</div>
-				<button class="btn btn-primary">Sign Up</button>
+				<button type="submit" class="btn btn-primary">Sign Up</button>
 			</form>
 		  </div>
 		</div>

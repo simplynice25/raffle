@@ -32,6 +32,7 @@
 			"tools": "application/",
 			"user": "application/controllers/",
 			"admin": "application/controllers/",
+			"encoder": "application/controllers/",
 			"general": "application/controllers/"
 		}
 	}
