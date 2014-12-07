@@ -10,6 +10,10 @@ TO-DO-LIST:
 	- Edit Profile
 	- Forgot Password - DONE
 	
+	Changes:
+	Remove intro
+	Enable firstname and lastname
+	
 	MID JANUARY: 80% ( Raffle Configuration/Settings | CRUD ( Create / Read / Update / Delete) users )
 	- Prizes ( Amount )
 	- Assign Prizes

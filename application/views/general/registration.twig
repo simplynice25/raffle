@@ -1,103 +1,74 @@
-{% set baseUrl = app.request.baseUrl %}
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ title }}</title>
+{% extends 'layout.twig' %}
 
-    <!-- Bootstrap -->
-    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet">
-	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
-	<style>
-		h1 { color: #FFF }
-		.registration-row {margin-top:50px}
-		body { background: url('http://www.wallpaperup.com/uploads/wallpapers/2013/04/10/73696/big_thumb_7876cbd598a352a01db4448a2226881e.jpg'); background-repeat: no-repeat;background-size: cover;background-color:#FFF}
-		.home-details .specifications p, .home-details .specifications h3 { color: #FFF }
-		.home-details .specifications { margin-top: 50px;background-color: rgba(0, 0, 0, 0.7) }
-	</style>
+{% block styles %}
+<link href="{{ baseUrl }}css/front-style.css" rel="stylesheet">
+{% endblock %}
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-  </head>
-  <body>
-  
-  <div class="container">
-  	<div class="row registration-row">
-		
-	<!-- REG -->
-	<div class="col-lg-12">
-	<h1>Registration</h1>
-		<div class="panel panel-default" style="background-color: rgba(255, 255, 255, 0.7)">
-		  <div class="panel-body">
-			<form role="form" action="{{ path('registration-process') }}" method="POST">
-				<div class="form-group">
-					<label for="or_num"><small>Official Receipt #</small></label>
-					<input type="text" id="or_num" class="form-control" disabled value="{{ or_num }}" placeholder="1234-KQWE-6753"/>
-				</div>
-				<div class="row">
-					<div class="col-lg-6">
-						<div class="form-group">
-							<label for="firstname"><small>Firstname</small></label>
-							<input type="text" id="firstname" class="form-control" disabled value="{{ firstname }}" placeholder="Juan"/>
-						</div>
-					</div>
-					<div class="col-lg-6">
-						<div class="form-group">
-							<label for="lastname"><small>Lastname</small></label>
-							<input type="text" id="lastname" class="form-control" disabled value="{{ lastname }}" placeholder="Dela Cruz"/>
-						</div>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-lg-6">
-						<div class="form-group">
-							<label for="email"><small>Email</small></label>
-							<input type="email" id="email" class="form-control" name="email" placeholder="user@raffle.com" required autofocus/>
-						</div>
-					</div>
-					<div class="col-lg-6">
-						<div class="form-group">
-							<label for="password"><small>Password</small></label>
-							<input type="password" id="password" class="form-control" name="password" placeholder="*****" required/>
-						</div>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-lg-6">
-						<div class="form-group">
-							<label for="mobile"><small>Phone # / Telephone #</small></label>
-							<input type="text" id="mobile" class="form-control" name="mobile" placeholder="+6390 123 4567 / 744-6200" required/>
-						</div>
-					</div>
-					<div class="col-lg-6">
-						<div class="form-group">
-							<label for="birthday"><small>Birthday</small></label>
-							<input type="date" id="birthday" class="form-control" name="birthday" required/>
-						</div>
-					</div>
-				</div>
-				<div class="form-group">
-					<label for="address"><small>Address</small></label>
-					<textarea id="address" name="address" class="form-control" required></textarea>
-				</div>
-				<button type="submit" class="btn btn-primary">Sign Up</button>
-			</form>
-		  </div>
-		</div>
-	</div>
-	<!-- REG OFF -->
-		
-		
-	</div>
-  </div>
-  
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-  </body>
-</html>
+{% block content %}
+{% include 'general/includes/btn-header.twig' %}
+
+<!-- REG -->
+<div class="col-lg-12 login-registration">
+    <h1>Registration</h1>
+    
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <form role="form" action="{{ path('registration-process') }}" method="POST">
+            <div class="form-group">
+                <label for="or_num"><small>Official Receipt #</small></label>
+                <input type="text" id="or_num" class="form-control" disabled value="{{ or_num }}" placeholder="1234-KQWE-6753"/>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="firstname"><small>Firstname</small></label>
+                        <input type="text" id="firstname" name="firstname" class="form-control" value="{{ firstname }}" placeholder="Juan" autofocus required/>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="lastname"><small>Lastname</small></label>
+                        <input type="text" id="lastname" name="lastname" class="form-control" value="{{ lastname }}" placeholder="Dela Cruz" required/>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="email"><small>Email</small></label>
+                        <input type="email" id="email" class="form-control" name="email" placeholder="user@raffle.com" required/>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="password"><small>Password</small></label>
+                        <input type="password" id="password" class="form-control" name="password" placeholder="Password" required/>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="mobile"><small>Phone # / Telephone #</small></label>
+                        <input type="text" id="mobile" class="form-control" name="mobile" placeholder="+6390 123 4567 / 744-6200" required/>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="birthday"><small>Birthday</small></label>
+                        <input type="date" id="birthday" class="form-control" name="birthday" required/>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="address"><small>Address</small></label>
+                <textarea id="address" name="address" class="form-control" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Sign Up</button>
+            <button type="reset" class="btn btn-default">Reset</button>
+        </form>
+      </div>
+    </div>
+</div>
+<!-- REG OFF -->
+{% endblock %}

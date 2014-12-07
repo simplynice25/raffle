@@ -69,10 +69,8 @@ class UserBridge {
 		);
 
 		$app['session']->set('registration', $preRegData);
-
-		$url = $app['url_generator']->generate('registration');
-
-		return $app->redirect($url);
+        
+        return Tools::redirect($app, 'registration');
 	}
 	
 	public function registration(Request $req, Application $app)
@@ -94,8 +92,8 @@ class UserBridge {
 		/* TODO: Check for email duplicate */
 		$preReg = $app['session']->get('registration');
 		
-		$firstname = $preReg['firstname'];
-		$lastname = $preReg['lastname'];
+		$firstname = $req->get('firstname'); // $preReg['firstname']
+		$lastname = $req->get('lastname'); // $preReg['lastname']
 		$orNum = $preReg['or_num'];
 		
 		$email = $req->get('email');
@@ -137,20 +135,23 @@ class UserBridge {
 		$receipt->setModifiedAt("now");
 		$app['orm.em']->persist($receipt);
 		$app['orm.em']->flush();
+        
+        Tools::autoLogin($app, $user->getEmail());
 		
-		return "done";
+		return Tools::redirect($app, 'user_overview');
 	}
 
 	public function resetPassword(Request $req, Application $app)
 	{
 		$msg = "reset_failed";
 		$email = $req->get('email');
+		$generatedUrl = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]-process";
 		
 		$user = Tools::findOneBy($app, "\Users", array("email" => $email, "view_status" => 5));
 		if ( ! empty($user))
 		{
 			$token = md5(uniqid()) . md5($email);
-			$url = $req->getUri() . '-process?token=' . $token;
+			$url = $generatedUrl . '?token=' . $token;
 			$html = $app['twig']->render('general/forgot-password/msg.forgot-password.twig', array( "url" => $url ));
 	
 			$message = \Swift_Message::newInstance()
@@ -172,7 +173,7 @@ class UserBridge {
 
 		$app['session']->getFlashBag()->set('message', $msg);
 
-		return $app->redirect($app['url_generator']->generate('login'));
+         return Tools::redirect($app, 'login');
 	}
 	
 	public function resetPasswordProcess(Request $req, Application $app)
@@ -181,14 +182,13 @@ class UserBridge {
 		$token = $req->get('token');
 		$password = $req->get('password');
 		$confirm_password = $req->get('confirm_password');
-		$loginUrl = $app['url_generator']->generate('login');
 
 		$userAuthToken = Tools::findOneBy($app, "\Users", array("token" => $token, "view_status" => 5));
 
 		if (empty($userAuthToken))
 		{
 			$app['session']->getFlashBag()->set('message', 'invalid_reset_token');
-			return $app->redirect($loginUrl);
+            return Tools::redirect($app, 'login');
 		}
 		
 		if ( ! empty($password) && $password == $confirm_password)
@@ -202,7 +202,7 @@ class UserBridge {
 			$app['orm.em']->flush();
 
 			$app['session']->getFlashBag()->set('message', 'reset_success');
-			return $app->redirect($loginUrl);
+			return Tools::redirect($app, 'login');
 		}
 		else if ( ! empty($password) && $password != $confirm_password)
 		{

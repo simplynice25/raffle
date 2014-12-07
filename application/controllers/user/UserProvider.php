@@ -15,6 +15,7 @@ class UserProvider
 	public static function routing(Application $app)
 	{
 		$ui = $app['controllers_factory'];
+        
 		// Overviews
 		$ui->match('/', 'user\UserProvider::index')->bind('user_overview');
 

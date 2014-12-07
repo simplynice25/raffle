@@ -1,4 +1,8 @@
-{% set baseUrl = app.request.baseUrl %}
+{% set baseUrl = app.request.baseUrl~'/' %}
+{% set noThrow = "The user provider must return a UserInterface object." %}
+{% if error is defined %}
+{% set errLog =  (error == "Bad credentials") ? "Invalid email or password." : error %}
+{% endif %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -11,6 +15,7 @@
     <!-- Bootstrap -->
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet">
 	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="{{ baseUrl }}css/style.css" rel="stylesheet">
 	{% block styles %}
 	{% endblock %}
 
@@ -24,25 +29,18 @@
   <body>
   <div class="container">
   <div class="row">
-  {% block content %}
-  {% endblock %}
+  {% block content %}{% endblock %}
   </div>
   </div>
   
   <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
   <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-  <script src="{{ baseUrl }}/js/jq.tablesorter.min.js"></script>
   <script>
   	var config = {
 		doc: $(document),
 		baseUrl: "{{ baseUrl }}",
-		_currUrl: "{{ app.request.getRequestUri() }}",
-		_delete: "{{ path('data-delete') }}",
-		_actions: "{{ path('data-actions') }}",
-		_pastData: "{{ path('past-data') }}",
 	}
   </script>
-  {% block scripts %}
-  {% endblock %}
+  {% block scripts %}{% endblock %}
   </body>
 </html>
