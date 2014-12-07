@@ -27,7 +27,9 @@
     <![endif]-->
   </head>
   <body>
-  <div class="container">
+  {% block navbar %}{% endblock %}
+  
+  <div class="container global-container">
   <div class="row">
   {% block content %}{% endblock %}
   </div>

@@ -1,3 +1,6 @@
+#General
+brandName: Raffle
+
 #Reset Password
 reset_failed: Failed to send email for password reset.
 reset_sent: Email sent for password reset.

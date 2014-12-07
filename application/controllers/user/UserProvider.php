@@ -19,11 +19,36 @@ class UserProvider
 		// Overviews
 		$ui->match('/', 'user\UserProvider::index')->bind('user_overview');
 
+		$before = function (Request $request, Application $app) {
+
+            $username = NULL;
+            $token = $app['security']->getToken();
+
+            if( null !== $token ) {
+                if (is_object($token->getUser()))
+                {
+                    $user = $token->getUser();
+                    $roles = $user->getRoles();
+                    $username = $user->getUsername();
+                }
+            }
+            
+            $app['session']->set('credentials', array($username));
+            
+			return NULL;
+		};
+
+		$ui->before($before);
+
 		return $ui;
 	}
 
 	public function index(Request $req, Application $app)
 	{
-		return "Hello user!";
+        $view = array(
+            'title' => 'Homepage',
+        );
+        
+		return $app['twig']->render('front/index.twig', $view);
 	}
 }
