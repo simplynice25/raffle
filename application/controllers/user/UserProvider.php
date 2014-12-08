@@ -18,24 +18,10 @@ class UserProvider
         
 		// Overviews
 		$ui->match('/', 'user\UserProvider::index')->bind('user_overview');
+        $ui->match('/settings', 'user\UserProvider::userSettings')->bind('user_settings');
 
 		$before = function (Request $request, Application $app) {
-
-            $username = NULL;
-            $token = $app['security']->getToken();
-
-            if( null !== $token ) {
-                if (is_object($token->getUser()))
-                {
-                    $user = $token->getUser();
-                    $roles = $user->getRoles();
-                    $username = $user->getUsername();
-                }
-            }
-            
-            $app['session']->set('credentials', array($username));
-            
-			return NULL;
+            return Tools::isLogged($app);
 		};
 
 		$ui->before($before);
@@ -51,4 +37,9 @@ class UserProvider
         
 		return $app['twig']->render('front/index.twig', $view);
 	}
+    
+    public function userSettings(Request $req, Application $app)
+    {
+        return "settings";
+    }
 }

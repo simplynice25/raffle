@@ -38,10 +38,17 @@ class Tools
 		return $object;
 	}
 	
-	public static function redirect(Application $app, $link, $params)
-	{	
-		$url = $app['url_generator']->generate($link, $params);
-
+	public static function redirect(Application $app, $link, $params = NULL)
+	{
+        if ( ! is_null($params))
+        {
+		    $url = $app['url_generator']->generate($link, $params);
+        }
+        else
+        {
+		    $url = $app['url_generator']->generate($link);
+        }
+        
 		return $app->redirect($url);
 	}
 
@@ -54,4 +61,22 @@ class Tools
         return TRUE;
 	}
 
+    public static function isLogged(Application $app)
+    {
+        $username = NULL;
+        $token = $app['security']->getToken();
+
+        if( null !== $token ) {
+            if (is_object($token->getUser()))
+            {
+                $user = $token->getUser();
+                $roles = $user->getRoles();
+                $username = $user->getUsername();
+            }
+        }
+        
+        $app['session']->set('credentials', array($username));
+        
+        return NULL;
+    }
 }

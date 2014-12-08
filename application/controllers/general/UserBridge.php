@@ -22,6 +22,7 @@ class UserBridge {
 		$routing->match('/pre-registration', 'general\UserBridge::preRegistration')->bind('pre-registration');
 		$routing->match('/registration', 'general\UserBridge::registration')->bind('registration');
 		$routing->match('/registration-process', 'general\UserBridge::registrationProcess')->bind('registration-process');
+		$routing->match('/registration-process-confirm', 'general\UserBridge::registrationConfirmation')->bind('registration-process-confirm');
 		
 		// Reset password
 		$routing->match('/reset-password', 'general\UserBridge::resetPassword')->bind('reset-password');
@@ -92,8 +93,8 @@ class UserBridge {
 		/* TODO: Check for email duplicate */
 		$preReg = $app['session']->get('registration');
 		
-		$firstname = $req->get('firstname'); // $preReg['firstname']
-		$lastname = $req->get('lastname'); // $preReg['lastname']
+		$firstname = $req->get('firstname');
+		$lastname = $req->get('lastname');
 		$orNum = $preReg['or_num'];
 		
 		$email = $req->get('email');
@@ -108,7 +109,7 @@ class UserBridge {
 		$user->setEmail($email);
 		$user->setPassword($password);
 		$user->setRoles('ROLE_USER');
-		$user->setViewStatus(5);
+		$user->setViewStatus(2);
 		$user->setCreatedAt("now");
 		$user->setModifiedAt("now");
 		$app['orm.em']->persist($user);
@@ -136,10 +137,55 @@ class UserBridge {
 		$app['orm.em']->persist($receipt);
 		$app['orm.em']->flush();
         
-        Tools::autoLogin($app, $user->getEmail());
-		
-		return Tools::redirect($app, 'user_overview');
+        // Tools::autoLogin($app, $user->getEmail());
+        $msg = "confirm_failed";
+        $token = md5(uniqid()) . md5($email);
+		$generatedUrl = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]-confirm?token=" . $token;
+        $html = $app['twig']->render('general/emails/confirm-reg.twig', array( "url" => $generatedUrl, "fullname" => $firstname . " " . $lastname ));
+	
+        $message = \Swift_Message::newInstance()
+                    ->setSubject("Confirm Registration")
+                    ->setFrom(array("admin@raffle.com" => "Raffle Draw"))
+                    ->setTo(array($email))
+                    ->addPart( $html , 'text/html' );
+
+        if ( $app['mailer']->send($message))
+        {
+            $user->setToken($token);
+            $user->setModifiedAt("now");
+            $app['orm.em']->persist($user);
+            $app['orm.em']->flush();
+            
+            $msg = "confirm_sent";
+        }
+
+		$app['session']->getFlashBag()->set('message', $msg);
+
+         return Tools::redirect($app, 'login');
 	}
+    
+    public function registrationConfirmation(Request $req, Application $app)
+    {
+        $token = $req->get('token');
+        $user = Tools::findOneBy($app, "\Users", array("token" => $token, "view_status" => 2));
+        
+        if ( ! empty($user))
+        {
+            $user->setToken(NULL);
+            $user->setViewStatus(5);
+            $user->setModifiedAt("now");
+            $app['orm.em']->persist($user);
+            $app['orm.em']->flush();
+            
+            Tools::autoLogin($app, $user->getEmail());
+            return Tools::redirect($app, 'user_overview');
+        }
+        
+        $msg = 'invalid_confirm_token';
+        $app['session']->getFlashBag()->set('message', $msg);
+        
+        return Tools::redirect($app, 'login');
+    }
 
 	public function resetPassword(Request $req, Application $app)
 	{

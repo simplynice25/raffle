@@ -2,7 +2,12 @@
 brandName: Raffle
 
 #Reset Password
-reset_failed: Failed to send email for password reset.
+reset_failed: Failed to send email for password reset or the account is deleted, or not yet activated.
 reset_sent: Email sent for password reset.
 invalid_reset_token: Link for password reset is invalid.
 reset_success: Password reset successful!
+
+#Registration confirmation
+confirm_failed: Failed to send email for account confirmation.
+confirm_sent: Email sent for account confirmation.
+invalid_confirm_token: Link for account confirmation is invalid.
