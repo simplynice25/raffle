@@ -17,3 +17,6 @@ password_not_match: Password did not match.
 profile_updated: Profile updated.
 email_exist: Email is already in used.
 invalid_profile: Invalid profile.
+
+#Raffle
+raffle_added: New raffle added.
