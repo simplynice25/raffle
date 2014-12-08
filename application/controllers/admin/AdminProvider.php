@@ -14,13 +14,17 @@ class AdminProvider
 	{
 		$ui = $app['controllers_factory'];
 		// Overviews
-		$ui->match('/', 'admin\AdminProvider::index')->bind('admin_overview');
+		$ui->match('/', 'admin\AdminProvider::index')->bind('dashboard');
 
 		return $ui;
 	}
 
 	public function index(Request $req, Application $app)
 	{
-		return "Hello admin!";
+        $view = array(
+            'title' => 'Dashboard',
+        );
+        
+		return $app['twig']->render('dashboard/index.twig', $view);
 	}
 }

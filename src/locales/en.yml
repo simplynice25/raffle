@@ -11,3 +11,9 @@ reset_success: Password reset successful!
 confirm_failed: Failed to send email for account confirmation.
 confirm_sent: Email sent for account confirmation.
 invalid_confirm_token: Link for account confirmation is invalid.
+
+#Settings
+password_not_match: Password did not match.
+profile_updated: Profile updated.
+email_exist: Email is already in used.
+invalid_profile: Invalid profile.

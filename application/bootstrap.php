@@ -71,7 +71,7 @@ $app['locale'] = 'en';
 
 $app->mount('/', user\UserProvider::routing($app));
 $app->mount('/login', general\UserBridge::routing($app));
-$app->mount('/admin', admin\AdminProvider::routing($app));
+$app->mount('/dashboard', admin\AdminProvider::routing($app));
 
 //echo $app['security.encoder.digest']->encodePassword('p@55w0rd','');
 

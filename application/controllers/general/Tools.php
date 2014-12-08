@@ -61,9 +61,9 @@ class Tools
         return TRUE;
 	}
 
-    public static function isLogged(Application $app)
+    public static function isLogged(Application $app, $action = NULL)
     {
-        $username = NULL;
+        $username = $role = NULL;
         $token = $app['security']->getToken();
 
         if( null !== $token ) {
@@ -72,10 +72,17 @@ class Tools
                 $user = $token->getUser();
                 $roles = $user->getRoles();
                 $username = $user->getUsername();
+                
+                if ( ! is_null($action))
+                {
+                    return self::findOneBy($app, '\Users', array('view_status' => 5));
+                }
+                
+                $role = $roles[0];
             }
         }
         
-        $app['session']->set('credentials', array($username));
+        $app['session']->set('credentials', array($username, $role));
         
         return NULL;
     }

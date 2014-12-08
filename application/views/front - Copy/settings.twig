@@ -1,0 +1,63 @@
+{% extends 'layout.twig' %}
+
+{% block content %}
+<div class="col-lg-8 col-lg-offset-2">
+
+{% if message is not empty and message[0] is defined %}
+<div class="alert alert-info"><i class="fa fa-fw fa-exclamation-triangle"></i> {{ message[0]|trans }}</div>
+{% endif %}
+
+<form action="{{ path('user_settings_action') }}" method="POST">
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="form-group">
+                <label for="firstname">Firstname</label>
+                <input type="text" id="firstname" name="firstname" class="form-control" value="{{ profile.getFirstname }}" placeholder="" required autofocus/>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="form-group">
+                <label for="lastname">Lastname</label>
+                <input type="text" id="lastname" name="lastname" class="form-control" value="{{ profile.getLastname }}" placeholder="" required />
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" class="form-control" value="{{ profile.getUser.getEmail }}" placeholder="" required/>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="form-group">
+                <label for="contact_number">Contact #</label>
+                <input type="text" id="contact_number" name="contact_number" class="form-control" value="{{ profile.getMobile }}" placeholder="" required />
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" class="form-control" value="" placeholder=""/>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="form-group">
+                <label for="confirm_password">Confirm Password</label>
+                <input type="password" id="confirm_password" name="confirm_password" class="form-control" value="" placeholder=""/>
+            </div>
+        </div>
+        <div class="col-lg-12">
+            <p class="text-danger"><i class="fa fa-fw fa-exclamation-triangle"></i> Leave the password empty if you don't want to change it.</p>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="birthday">Birthday</label>
+        <input type="date" id="birthday" name="birthday" class="form-control" value="{{ profile.getBirthday|date('Y-m-d') }}" placeholder="" required />
+    </div>
+    <div class="form-group">
+        <label for="address">Address</label>
+        <textarea class="form-control" name="address" id="address" placeholder="" required>{{ profile.getAddress }}</textarea>
+    </div>
+    <button type="submit" class="btn btn-sm btn-primary">Save settings</button>
+</form>
+</div>
+{% endblock %}
