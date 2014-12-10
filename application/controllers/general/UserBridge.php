@@ -102,6 +102,13 @@ class UserBridge {
 		$mobile = $req->get('mobile');
 		$birthday = $req->get('birthday');
 		$address = $req->get('address');
+        
+        $emailAuthenticate = Tools::findOneBy($app, '\Users', array('email' => $email));
+        if ( ! empty($emailAuthenticate))
+        {
+            $app['session']->getFlashBag()->set('message', 'email_exist');
+            return Tools::redirect($app, 'login');
+        }
 		
 		$password = $app['security.encoder.digest']->encodePassword($password, '');
 		

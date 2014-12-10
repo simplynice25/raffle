@@ -3,5 +3,5 @@ database:
     host: localhost
     dbname: raffle
     user: root
-    password: 
+    password: root
     charset: utf8
