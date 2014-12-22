@@ -28,6 +28,9 @@ class Raffles {
 	protected $consolations;
 
 	/** @Column(type="integer", nullable=true) **/
+	protected $raffle_status;
+
+	/** @Column(type="integer", nullable=true) **/
 	protected $view_status;
 
 	/** @Column(type="datetime", nullable=true) **/
@@ -159,6 +162,29 @@ class Raffles {
     public function getConsolations()
     {
         return $this->consolations;
+    }
+
+    /**
+     * Set raffle_status
+     *
+     * @param integer $raffleStatus
+     * @return Raffles
+     */
+    public function setRaffleStatus($raffleStatus)
+    {
+        $this->raffle_status = $raffleStatus;
+    
+        return $this;
+    }
+
+    /**
+     * Get raffle_status
+     *
+     * @return integer 
+     */
+    public function getRaffleStatus()
+    {
+        return $this->raffle_status;
     }
 
     /**

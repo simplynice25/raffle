@@ -37,6 +37,11 @@ class Tools
 		
 		return $object;
 	}
+    
+    public static function findById(Application $app, $model, $ids)
+    {
+        return $app['orm.em']->find('models' . $model, $ids);
+    }
 	
 	public static function redirect(Application $app, $link, $params = NULL)
 	{
@@ -85,5 +90,15 @@ class Tools
         $app['session']->set('credentials', array($username, $role));
         
         return NULL;
+    }
+    
+    public static function delete($app, $object)
+    {
+        $object->setViewStatus(1);
+        $object->setModifiedAt('now');
+		$app['orm.em']->persist($object);
+		$app['orm.em']->flush();
+        
+        return TRUE;
     }
 }

@@ -42,10 +42,13 @@ class UserBridge {
 
 		if ($app['security']->isGranted("ROLE_ADMIN"))
 		{
+            return $app['security']->isGranted("ROLE_ADMIN");
 			return $app->redirect($app['url_generator']->generate("admin_overview"));
 		}
-		else if ($app['security']->isGranted("ROLE_USER"))
+        
+		if ($app['security']->isGranted("ROLE_USER"))
 		{
+            return $app['security']->isGranted("ROLE_USER");
 			return $app->redirect($app['url_generator']->generate("user_overview"));
 		}
 

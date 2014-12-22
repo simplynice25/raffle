@@ -20,3 +20,9 @@ invalid_profile: Invalid profile.
 
 #Raffle
 raffle_added: New raffle added.
+raffle_deleted: Raffle deleted.
+raffle_activate_failed: Raffle failed to activate, raffle ID is invalid.
+raffle_activate_success: Raffle activated.
+raffle_update_failed: Raffle failed to update, raffle ID is invalid.
+raffle_update_success: Raffle updated.
+cannot_activate_due_to_end_date: Cannot activate raffle due to end date entry, please change the end date of this raffle.
