@@ -1,21 +1,21 @@
 <ul class="list-group">
-    <a href="{{ path('dashboard') }}" class="list-group-item">
+    <a href="{{ path('dashboard') }}" class="list-group-item{% if active_tab == 0 %} active{% endif %}">
         <span class="badge"><i class="fa fa-fw fa-database"></i></span>
         Dashboard
     </a>
-    <a href="{{ path('raffle_overview') }}" class="list-group-item">
+    <a href="{{ path('raffle_overview') }}" class="list-group-item{% if active_tab == 1 %} active{% endif %}">
         <span class="badge"><i class="fa fa-fw fa-empire"></i></span>
         Raffle Settings
     </a>
-    <a href="#" class="list-group-item">
+    <a href="{{ path('winner_overview') }}" class="list-group-item{% if active_tab == 2 %} active{% endif %}">
         <span class="badge"><i class="fa fa-fw fa-trophy"></i></span>
         Winners Settings
     </a>
-    <a href="#" class="list-group-item">
+    <a href="#" class="list-group-item{% if active_tab == 3 %} active{% endif %}">
         <span class="badge"><i class="fa fa-fw fa-trophy"></i></span>
         Consolations Settings
     </a>
-    <a href="#" class="list-group-item">
+    <a href="#" class="list-group-item{% if active_tab == 4 %} active{% endif %}">
         <span class="badge"><i class="fa fa-fw fa-users"></i></span>
         Manage users
     </a>

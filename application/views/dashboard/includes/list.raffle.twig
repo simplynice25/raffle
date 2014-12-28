@@ -1,0 +1,34 @@
+{% if raffles|length > 0 %}
+<table class="table table-striped table-bordered table-hover table-condensed">
+<thead>
+    <tr>
+        <th>Title</th>
+        <th>Start - End Date</th>
+        <th>Winners</th>
+        <th>Consolations</th>
+        {% if tab[0] == 2 %}<th>Actions</th>{% endif %}
+    </tr>
+</thead>
+<tbody>
+{% for raffle in raffles %}
+    <tr data-raffle='{"id": "{{ raffle.getId }}","title": "{{ raffle.getRaffleTitle }}","desc":"{{ raffle.getRaffleDescription }}","start": "{{ raffle.getStartDate|date('Y-m-d') }}","end": "{{ raffle.getEndDate|date('Y-m-d') }}","winners": "{{ raffle.getWinners }}","consos": "{{ raffle.getConsolations }}"}'>
+        <td>{{ raffle.getRaffleTitle }}</td>
+        <td>{{ raffle.getStartDate|date('Y-m-d') }} - {{ raffle.getEndDate|date('Y-m-d') }}</td>
+        <td>{{ raffle.getWinners|number_format }} person(s)</td>
+        <td>{{ raffle.getConsolations|number_format }} person(s)</td>
+        {% if tab[0] == 2 %}
+        <td class="actions-btn">
+            <div class="btn-group" role="group" aria-label="...">
+              <a href="{{ path('raffle_active', {id: raffle.getId, tab: tab[0]}) }}" class="btn btn-success btn-xs btn-activate"><i class="fa fa-fw fa-check"></i></a>
+              <a href="{{ path('raffle_delete', {id: raffle.getId, tab: tab[0]}) }}" class="btn btn-danger btn-xs btn-delete"><i class="fa fa-fw fa-trash-o"></i></a>
+              <a href="#" class="btn btn-info btn-xs" data-toggle="modal" data-target="#raffleModal" data-type="2"><i class="fa fa-fw fa-pencil"></i></a>
+            </div>
+        </td>
+        {% endif %}
+    </tr>
+{% endfor %}
+</tbody>
+</table>
+{% else %}
+    <div class="alert alert-warning" style="margin-top:15px"><i class="fa fa-fw fa-exclamation-triangle"></i> No {{ tab[1] }} records yet{% if issearch is defined %}{{ issearch }}{% endif %}.</div>
+{% endif %}

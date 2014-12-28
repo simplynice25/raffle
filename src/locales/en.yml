@@ -26,3 +26,9 @@ raffle_activate_success: Raffle activated.
 raffle_update_failed: Raffle failed to update, raffle ID is invalid.
 raffle_update_success: Raffle updated.
 cannot_activate_due_to_end_date: Cannot activate raffle due to end date entry, please change the end date of this raffle.
+
+#Winners
+invalid_file_extension: Invalid file extension.
+prize_update_success: Prize update successful.
+prize_update_failed: Prize update failed.
+prize_added: New prize added.

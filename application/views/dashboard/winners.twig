@@ -1,0 +1,38 @@
+{% extends 'dashboard/layout.twig' %}
+
+{% block content %}
+    <div class="col-lg-12">
+        {% if message is not empty %}
+        <div class="alert alert-info"><i class="fa fa-fw fa-exclamation-triangle"></i> {{ message[0]|trans }}</div>
+        {% endif %}
+    
+        <h1>Raffles</h1>
+    </div>
+    <div class="col-lg-3">
+        {% include 'dashboard/includes/admin.sidebar.twig' %}
+    </div>
+    <div class="col-lg-9">
+    <button class="btn btn-success btn-sm pull-right" data-toggle="modal" data-target="#winnerModal" data-type="2"><i class="fa fa-fw fa-plus"></i> New Winner Settings</button>
+    <h1>Winners Settings</h1>
+    <div class="form-group">
+        <label for="raffle_">Raffles</label>
+        <select id="raffle_" name="raffle_" class="form-control">
+            {% if raffles|length > 0 %}
+                {% for raffle in raffles %}
+                    <option value="{{ raffle.getId }}" data-winners="{{ raffle.getWinners }}">{{ raffle.getRaffleTitle }}</option>
+                {% endfor %}
+            {% endif %}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="winners_">Winners</label>
+        <select id="winners_" name="winners_" class="form-control">
+        </select>
+    </div>
+    
+    {% include 'dashboard/includes/modal.winner.twig' %}
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ baseUrl }}js/jq.admin.functions.js"></script>
+{% endblock %}
