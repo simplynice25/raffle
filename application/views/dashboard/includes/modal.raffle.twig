@@ -12,6 +12,10 @@
             <input type="text" name="title" id="title" class="form-control" value="" placeholder="" required/>
         </div>
         <div class="form-group">
+            <label for="desc">Description</label>
+            <textarea name="desc" id="desc" class="form-control" value="" placeholder="" required></textarea>
+        </div>
+        <div class="form-group">
             <label for="start">Start Date</label>
             <input type="date" name="start" id="start" class="form-control" value="{{ "now"|date('Y-m-d') }}" placeholder="" required/>
         </div>

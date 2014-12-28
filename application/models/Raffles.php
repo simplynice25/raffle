@@ -15,6 +15,9 @@ class Raffles {
 	/** @Column(type="string", nullable=true) **/
 	protected $raffle_title;
 
+	/** @Column(type="text", nullable=true) **/
+	protected $raffle_description;
+
 	/** @Column(type="datetime", nullable=true) **/
 	protected $start_date;
 
@@ -70,6 +73,29 @@ class Raffles {
     public function getRaffleTitle()
     {
         return $this->raffle_title;
+    }
+
+    /**
+     * Set raffle_description
+     *
+     * @param string $raffleDescription
+     * @return Raffles
+     */
+    public function setRaffleDescription($raffleDescription)
+    {
+        $this->raffle_description = $raffleDescription;
+    
+        return $this;
+    }
+
+    /**
+     * Get raffle_description
+     *
+     * @return string 
+     */
+    public function getRaffleDescription()
+    {
+        return $this->raffle_description;
     }
 
     /**

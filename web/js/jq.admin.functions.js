@@ -19,13 +19,14 @@
             data_ = parent_inv.data('raffle'),
             actionAttr = self.find('form').data('action');
 
-       self.find('form').find("input[type=text], input[type=date], input[type=number]").val("");
+       self.find('form').find("textarea, input[type=text], input[type=date], input[type=number]").val("");
 
        if (data_)
        {
            var action_ = actionAttr + '&id=' + data_.id;
            self.find('form').attr('action', action_);
            self.find('form input[name=title]').val(data_.title);
+           self.find('form textarea[name=desc]').val(data_.desc);
            self.find('form input[name=start]').val(data_.start);
            self.find('form input[name=end]').val(data_.end);
            self.find('form input[name=winners]').val(data_.winners);

@@ -57,6 +57,7 @@ class AdminProvider
         $msg = "raffle_added";
         $id = $req->get('id');
         $title = $req->get('title');
+        $desc = $req->get('desc');
         $start = $req->get('start');
         $end = $req->get('end');
         $winners = (int) $req->get('winners');
@@ -80,6 +81,7 @@ class AdminProvider
             $raffle->setCreatedAt('now');
         }
 
+        $raffle->setRaffleDescription($desc);
         $raffle->setRaffleTitle($title);
         $raffle->setStartDate(new \DateTime($start));
         $raffle->setEndDate(new \DateTime($end));
