@@ -31,7 +31,6 @@ class UserProvider implements UserProviderInterface
 											$_POST["recaptcha_response_field"]);
 
 			if ( ! $resp->is_valid) {
-				
 				$error = "The CAPTCHA wasn't entered correctly. Please try it again.";
 				$this->app['session']->getFlashBag()->set('err_', $error);
 

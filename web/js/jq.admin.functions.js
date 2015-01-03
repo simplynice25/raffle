@@ -1,8 +1,15 @@
 // JavaScript Document
 (function(){
-    
-    appendWinnerOpt($('select[name=raffle_]').val(), $('select[name=raffle_] option:selected').data('winners'), 1);
-    
+
+    if ($('.btn.add-prize').length > 0)
+    {
+        $('.btn.add-prize').tooltip();
+    }
+
+    onDocReady();
+
+    appendWinnerOpt($('select[name=raffle]').val(), $('select[name=raffle] option:selected').data('winners'), 1);
+    /*
     $('#winnerModal').on('shown.bs.modal', function(e){        
         var select_ = $('select[name=raffle]')
             winners = $('select[name=raffle] option:selected').data('winners')+1,
@@ -11,6 +18,7 @@
         select_.focus();
         appendWinnerOpt(raffleId, winners);
     });
+    */
 
     $('#raffleModal').on('shown.bs.modal', function(e){
         $('input[name=title]').focus();
@@ -45,9 +53,9 @@
         raffleActivate: '.btn-activate',
         raffleSearch: 'input[name=q]',
         searchTime: 0,
+        prizeModal: '#prizeModal',
         raffleChange: 'select#raffle',
-        raffleChange_: 'select#raffle_',
-        winnerChange: 'select#winners'
+        addPrize: '.btn.add-prize',
 	}
 	
 	var funcInit = {
@@ -97,31 +105,54 @@
                     winners = selected.data('winners')+1
                     raffleId = selected.val();
 
-                appendWinnerOpt(raffleId, winners);
+                onDocReady();
+                // appendWinnerOpt(raffleId, winners);
             })
         },
-        raffleChange_: function() {
-            return this.delegate(funcConf.raffleChange_, 'change', function(){
-                var selected = $('select[name=raffle_] option:selected'),
-                    winners = selected.data('winners')+1
-                    raffleId = selected.val();
-
-                appendWinnerOpt(raffleId, winners, 1);
-            })
-        },
-        winnerChange: function() {
-            return this.delegate(funcConf.winnerChange, 'change', function(){
-                return true;
-                var selected = $('select[name=winner] option:selected');
+        prizeModalAction: function() {
+            return this.delegate(funcConf.prizeModal, 'shown.bs.modal', function(e){
+                var self = $(this),
+                    invoker = $(e.relatedTarget),
+                    modalForm = self.find('form'),
+                    modalFormAction = modalForm.data('action'),
+                    imgMsgObj = self.find('.text-danger');
                 
-                if (selected.data('hasprize') == 0 || selected.data('hasprize') == '0')
-                {
-                    alert('Already has a prize.');
-                    $('#winnerModal button[type=submit]').attr('disabled', true);
+                if (invoker.data('type') == 1){
+                    modalForm.attr('action', modalFormAction);
+                    imgMsgObj.addClass('hide');
                 } else {
-                    $('#winnerModal button[type=submit]').attr('disabled', false);
+                    modalForm.attr('action', modalFormAction + '?id=' + invoker.data('id'));
+                    imgMsgObj.removeClass('hide');
                 }
-                
+            })
+        },
+        addPrize: function(){
+            return this.delegate(funcConf.addPrize, 'click', function(e){
+                e.preventDefault();
+                var self = $(this),
+                    status = self.data('status'),
+                    prize  = self.parent().parent().parent().parent().data('id'),
+                    raffle = $('select[name=raffle] option:selected').val(),
+                    winner = $('select[name=winner] option:selected').val();
+
+                    if (status == 0)
+                    {
+                        self
+                        .attr('title', 'Remove').tooltip('fixTitle').tooltip('show')
+                        .removeClass('btn-success').addClass('btn-danger')
+                        .find('i.fa').removeClass('fa-plus').addClass('fa-minus');
+                    } else {
+                        self
+                        .attr('title', 'Add').tooltip('fixTitle').tooltip('show')
+                        .removeClass('btn-danger').addClass('btn-success')
+                        .find('i.fa').removeClass('fa-minus').addClass('fa-plus');
+                    }
+                    
+                    self.data('status', status = (status == 0) ? 1 : 0);
+                    
+                    console.log(prize);
+                    console.log(raffle);
+                    console.log(winner);
             })
         },
 	}
@@ -131,30 +162,22 @@
     config.doc.trashAlert();
     config.doc.raffleActivate();
     config.doc.raffleSearch();
+    
+    config.doc.prizeModalAction();
     config.doc.raffleChange();
-    config.doc.raffleChange_();
-    config.doc.winnerChange();
+    config.doc.addPrize();
 
 })(jQuery,window,document);
 
-function appendWinnerOpt(id, n, z)
+
+function appendWinnerOpt(id, n)
 {
-    if (!z)
-    {
-        $('#winners').attr('disabled', true).html( '<option>Loading ...</option>' );
-    } else {
-        $('#winners_').attr('disabled', true).html( '<option>Loading ...</option>' );
-    }
-        
+    return true;
+    $('#winner').attr('disabled', true).html( '<option>Loading ...</option>' );
     $.get('winner-has-prize', { raffle: id, winners: n })
     .done(function( data )
     {
-        if (!z)
-        {
-            $('#winners').attr('disabled', false).empty().html( data );
-        } else {
-            $('#winners_').attr('disabled', false).empty().html( data );
-        }
+        $('#winner').attr('disabled', false).empty().html( data );
     })
     .fail(function()
     {
@@ -163,11 +186,33 @@ function appendWinnerOpt(id, n, z)
     .always(function( data )
     {
         return true;
-        var selected = $('select[name=winner] option:selected');
-        
-        if (selected.data('hasprize') == 0 || selected.data('hasprize') == '0')
-        {
-            $('#winnerModal button[type=submit]').attr('disabled', true);
-        }
     });
+}
+
+function onDocReady()
+{
+    if ($('#winner').length === 0) return false;
+    
+    var winners = $('select[name=raffle] option:selected').data('winners')+1, options_ = '';
+    for (var i=1;i<winners;i++)
+    {
+        options_ += '<option value="'+i+'">'+ordinal_suffix_of(i)+'</option>';
+    }
+    
+    $('#winner').html(options_);
+}
+
+function ordinal_suffix_of(i) {
+    var j = i % 10,
+        k = i % 100;
+    if (j == 1 && k != 11) {
+        return i + "st";
+    }
+    if (j == 2 && k != 12) {
+        return i + "nd";
+    }
+    if (j == 3 && k != 13) {
+        return i + "rd";
+    }
+    return i + "th";
 }

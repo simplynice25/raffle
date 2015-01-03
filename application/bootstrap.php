@@ -7,6 +7,7 @@ use Symfony\Component\Translation\Loader\YamlFileLoader;
 use Symfony\Component\Security\Core\Encoder\MessageDigestPasswordEncoder;
 
 define('UPLOAD_DIR', dirname(__FILE__) . '/../web/upload/');
+define('APP_DIR', dirname(__FILE__) . '/plugins/');
 
 include_once('settings.php');
 require_once(__DIR__ . '/../vendor/autoload.php');
@@ -57,7 +58,7 @@ $app->register(new Silex\Provider\SecurityServiceProvider(), array(
 		)
 	),
 	'security.access_rules' => array(
-        array('/u', 'IS_AUTHENTICATED_ANONYMOUSLY'),
+        //array('/u', 'IS_AUTHENTICATED_ANONYMOUSLY'),
 		array('^/u/', 'ROLE_USER'),
 		array('^/dashboard/', 'ROLE_ADMIN'),
 	),
@@ -74,6 +75,8 @@ $app['locale'] = 'en';
 $app->mount('/', user\UserProvider::routing($app));
 $app->mount('/login', general\UserBridge::routing($app));
 $app->mount('/dashboard', admin\AdminProvider::routing($app));
+
+$app->get('/thumbnails/{params}/{q}', 'general\Tools::thumb')->bind('img-thumb');
 
 //echo $app['security.encoder.digest']->encodePassword('p@55w0rd','');
 

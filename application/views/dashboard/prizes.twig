@@ -11,39 +11,27 @@
         {% if message is not empty %}
         <div class="alert alert-info"><i class="fa fa-fw fa-exclamation-triangle"></i> {{ message[0]|trans }}</div>
         {% endif %}
-        <h1>{{ title }}</h1>
+        <h1>Raffles</h1>
     </div>
     <div class="col-lg-3">
         {% include 'dashboard/includes/admin.sidebar.twig' %}
     </div>
     <div class="col-lg-9">
-        <div class="form-group">
-            <label for="raffle">Raffles</label>
-            <select name="raffle" id="raffle" class="form-control">
-            {% for raffle in raffles %}
-                <option value="{{ raffle.getId }}" data-winners="{{ raffle.getWinners }}">{{ raffle.getRaffleTitle }}</option>
-            {% endfor %}
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="winner">Winners</label>
-            <select name="winner" id="winner" class="form-control">
-            </select>
-        </div>
+        <button class="btn btn-success" data-toggle="modal" data-target="#prizeModal" data-type="1"><i class="fa fa-fw fa-plus"></i> Prize</button>
         <br/><br/>
         <div class="row">
         {% if prizes|length > 0 %}
-        {% for k, prize in prizes %}
-          <div class="col-sm-6 col-md-4" data-id="{{ prize.getId }}">
+        {% for prize in prizes %}
+          <div class="col-sm-6 col-md-4">
             <div class="thumbnail">
+              <!--<img src="../upload/{{ prize.getPrizeImage }}" alt="{{ prize.getPrizeTitle }}">-->
               <img src="{{ path('img-thumb', {params: '260x260c', q: prize.getPrizeImage }) }}" alt="{{ prize.getPrizeTitle }}" />
               <div class="caption">
                 <h3>{{ prize.getPrizeTitle }}</h3>
                 <p>{{ prize.getPrizeDesc }}</p>
                 <p>
-                <a href="#" class="btn btn-success btn-xs add-prize" data-status="{{ isprizes[k] }}" role="button" data-toggle="tooltip" data-placement="top" title="{% if isprizes[k] == 0 %}Add{% else %}Remove{% endif %}">
-                    <i class="fa fa-fw fa-plus"></i>
-                </a>
+                <!-- <a href="#" class="btn btn-danger btn-xs" role="button"><i class="fa fa-fw fa-trash-o"></i></a> -->
+                <a href="#" class="btn btn-primary btn-xs" role="button" data-toggle="modal" data-target="#prizeModal" data-type="2" data-id="{{ prize.getId }}"><i class="fa fa-fw fa-pencil"></i></a>
                 </p>
               </div>
             </div>
@@ -54,6 +42,8 @@
         {% endif %}
         </div>
     </div>
+    
+    {% include 'dashboard/includes/modal.prizes.twig' %}
 {% endblock %}
 
 {% block scripts %}

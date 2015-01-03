@@ -12,28 +12,14 @@ class Prizes {
 	/** @Id @Column(type="integer") @GeneratedValue **/
 	protected $id;
 
-	/** @ManyToOne(targetEntity="Raffles") 
-	 *  @JoinColumn(name="raffle_id", referencedColumnName="id")
-	*/
-	private $raffle;
-
-	/** @Column(type="integer", nullable=true) **/
-	protected $prize_place;
-
 	/** @Column(type="string", nullable=true) **/
 	protected $prize_title;
 
 	/** @Column(type="string", nullable=true) **/
-	protected $prize_description;
-
-	/** @Column(type="integer", nullable=true) **/
-	protected $prize_amount;
+	protected $prize_desc;
 
 	/** @Column(type="string", nullable=true) **/
 	protected $prize_image;
-
-	/** @Column(type="integer", nullable=true) **/
-	protected $prize_type;
 
 	/** @Column(type="integer", nullable=true) **/
 	protected $view_status;
@@ -52,29 +38,6 @@ class Prizes {
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set prize_place
-     *
-     * @param integer $prizePlace
-     * @return Prizes
-     */
-    public function setPrizePlace($prizePlace)
-    {
-        $this->prize_place = $prizePlace;
-    
-        return $this;
-    }
-
-    /**
-     * Get prize_place
-     *
-     * @return integer 
-     */
-    public function getPrizePlace()
-    {
-        return $this->prize_place;
     }
 
     /**
@@ -101,49 +64,26 @@ class Prizes {
     }
 
     /**
-     * Set prize_description
+     * Set prize_desc
      *
-     * @param string $prizeDescription
+     * @param string $prizeDesc
      * @return Prizes
      */
-    public function setPrizeDescription($prizeDescription)
+    public function setPrizeDesc($prizeDesc)
     {
-        $this->prize_description = $prizeDescription;
+        $this->prize_desc = $prizeDesc;
     
         return $this;
     }
 
     /**
-     * Get prize_description
+     * Get prize_desc
      *
      * @return string 
      */
-    public function getPrizeDescription()
+    public function getPrizeDesc()
     {
-        return $this->prize_description;
-    }
-
-    /**
-     * Set prize_amount
-     *
-     * @param integer $prizeAmount
-     * @return Prizes
-     */
-    public function setPrizeAmount($prizeAmount)
-    {
-        $this->prize_amount = $prizeAmount;
-    
-        return $this;
-    }
-
-    /**
-     * Get prize_amount
-     *
-     * @return integer 
-     */
-    public function getPrizeAmount()
-    {
-        return $this->prize_amount;
+        return $this->prize_desc;
     }
 
     /**
@@ -167,29 +107,6 @@ class Prizes {
     public function getPrizeImage()
     {
         return $this->prize_image;
-    }
-
-    /**
-     * Set prize_type
-     *
-     * @param integer $prizeType
-     * @return Prizes
-     */
-    public function setPrizeType($prizeType)
-    {
-        $this->prize_type = $prizeType;
-    
-        return $this;
-    }
-
-    /**
-     * Get prize_type
-     *
-     * @return integer 
-     */
-    public function getPrizeType()
-    {
-        return $this->prize_type;
     }
 
     /**
@@ -259,28 +176,5 @@ class Prizes {
     public function getModifiedAt()
     {
         return $this->modified_at;
-    }
-
-    /**
-     * Set raffle
-     *
-     * @param \models\Raffles $raffle
-     * @return Prizes
-     */
-    public function setRaffle(\models\Raffles $raffle = null)
-    {
-        $this->raffle = $raffle;
-    
-        return $this;
-    }
-
-    /**
-     * Get raffle
-     *
-     * @return \models\Raffles 
-     */
-    public function getRaffle()
-    {
-        return $this->raffle;
     }
 }

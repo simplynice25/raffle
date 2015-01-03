@@ -87,6 +87,14 @@ class Tools
             }
         }
         
+        if (empty($username) || empty($role))
+        {
+            $err_ = $app['session']->getFlashBag()->get('err_');
+            
+            $app['session']->getFlashBag()->set('err_', (!empty($err_) && isset($err_[0])) ? $err_ : null);
+            return self::redirect($app, 'login');
+        }
+        
         $app['session']->set('credentials', array($username, $role));
         
         return NULL;
@@ -100,5 +108,52 @@ class Tools
 		$app['orm.em']->flush();
         
         return TRUE;
+    }
+    
+    public function thumb(Request $request, Application $app, $params = NULL, $q = NULL)
+    {
+        $res = preg_match("^([0-9]+)x([0-9]+)([a-z]*)^i", $params , $matches);
+        
+        $_GET['src'] = $app['request']->getBaseUrl() . '/upload/' . $q;
+        
+        $file = UPLOAD_DIR . $q;
+        
+        if ( ! file_exists($file))
+		{
+			$app->abort(404);
+        }
+        
+		$_GET['w'] = $matches[1];
+		$_GET['h'] = $matches[2];
+		$_GET['a'] = $matches[3];
+        $_GET['q'] = 100;
+        
+        if (isset($matches[3]) && ! empty($matches[3]))
+        {
+            switch ($matches[3])
+            {
+                case "f":
+                case "fit":
+                    $_GET['zc'] = 0;
+                    break;
+                case "b":
+                case "borders":
+                    $_GET['zc'] = 2;
+                    break;
+                case "r":
+                case "resize":
+                    $_GET['zc'] = 3;
+                    break;
+                case "c":
+                case "crop":
+                default:
+                    $_GET['zc'] = 1;
+                    break;
+            }
+        }
+        
+        $_SERVER['QUERY_STRING'] = http_build_query($_GET);
+        
+        require_once(APP_DIR . "TimThumb/timthumb.php");
     }
 }
