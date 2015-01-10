@@ -8,18 +8,6 @@
 
     onDocReady();
 
-    appendWinnerOpt($('select[name=raffle]').val(), $('select[name=raffle] option:selected').data('winners'), 1);
-    /*
-    $('#winnerModal').on('shown.bs.modal', function(e){        
-        var select_ = $('select[name=raffle]')
-            winners = $('select[name=raffle] option:selected').data('winners')+1,
-            raffleId = $('select[name=raffle] option:selected').val();
-        
-        select_.focus();
-        appendWinnerOpt(raffleId, winners);
-    });
-    */
-
     $('#raffleModal').on('shown.bs.modal', function(e){
         $('input[name=title]').focus();
         
@@ -55,7 +43,10 @@
         searchTime: 0,
         prizeModal: '#prizeModal',
         raffleChange: 'select#raffle',
+        winnerChange: 'select#winner',
         addPrize: '.btn.add-prize',
+        banUser: '.btn.btn-ban',
+        userSearch: 'input#search',
 	}
 	
 	var funcInit = {
@@ -100,13 +91,13 @@
             })
         },
         raffleChange: function() {
-            return this.delegate(funcConf.raffleChange, 'change', function(){
-                var selected = $('select[name=raffle] option:selected'),
-                    winners = selected.data('winners')+1
-                    raffleId = selected.val();
+            return this.delegate(funcConf.raffleChange+','+funcConf.winnerChange, 'change', function(){
+                var obj = $(this),
+                    raffle = $('select[name=raffle] option:selected').val()
+                    dataType = obj.data('type');
 
-                onDocReady();
-                // appendWinnerOpt(raffleId, winners);
+                if (obj.attr('id') == 'raffle') onDocReady();
+                winnerPrizes(raffle, dataType);
             })
         },
         prizeModalAction: function() {
@@ -131,28 +122,116 @@
                 e.preventDefault();
                 var self = $(this),
                     status = self.data('status'),
+                    type = self.data('type'),
                     prize  = self.parent().parent().parent().parent().data('id'),
                     raffle = $('select[name=raffle] option:selected').val(),
                     winner = $('select[name=winner] option:selected').val();
-
-                    if (status == 0)
+                    
+                    if (prize == 0 || raffle == 0 || winner == 0) return false;
+                    
+                    self.attr('disable', true).find('i.fa').removeClass('fa-plus fa-minus').addClass('fa-refresh fa-spin');
+                    
+                    $.get((type==='conso') ? 'add-conso-prize' : 'add-prize', {prize: prize, raffle: raffle, winner: winner, status: (status == 0) ? 5 : 1})
+                    .done(function(data)
                     {
-                        self
-                        .attr('title', 'Remove').tooltip('fixTitle').tooltip('show')
-                        .removeClass('btn-success').addClass('btn-danger')
-                        .find('i.fa').removeClass('fa-plus').addClass('fa-minus');
-                    } else {
-                        self
-                        .attr('title', 'Add').tooltip('fixTitle').tooltip('show')
-                        .removeClass('btn-danger').addClass('btn-success')
-                        .find('i.fa').removeClass('fa-minus').addClass('fa-plus');
+                        console.log('Done processing ..');
+                    })
+                    .fail(function(data)
+                    {
+                        console.log('Something went wrong ..');
+                    })
+                    .always(function(data)
+                    {
+                        if (status == 0)
+                        {
+                            self
+                            .attr('title', 'Remove').tooltip('fixTitle').tooltip('show')
+                            .removeClass('btn-success').addClass('btn-danger')
+                            .find('i.fa').removeClass('fa-refresh fa-spin').addClass('fa-minus');
+                        } else {
+                            self
+                            .attr('title', 'Add').tooltip('fixTitle').tooltip('show')
+                            .removeClass('btn-danger').addClass('btn-success')
+                            .find('i.fa').removeClass('fa-refresh fa-spin').addClass('fa-plus');
+                        }
+                        
+                        self.data('status', status = (status == 0) ? 1 : 0).attr('disable', false);
+                    })
+            })
+        },
+        banUser: function(){
+            return this.delegate(funcConf.banUser, 'click', function(){
+                if (!confirm('Are you sure you want to ban this user?')) return false;
+
+                var self = $(this),
+                    btnTxt = '',
+                    userId = self.parent().parent().parent().data('user-id'),
+                    status_ = self.data('status');
+
+                    self.children('i.fa').addClass('fa-refresh fa-spin').removeClass('fa-ban');
+
+                $.get('user-action', { user: userId, status: status_ })
+                .done(function( data )
+                {
+                    data = $.parseJSON(data);
+
+                    if (data.message == 'error')
+                    {
+                        btnTxt = (status_ == 5) ? 'Unban' : 'Ban';
+                        return false;
                     }
-                    
-                    self.data('status', status = (status == 0) ? 1 : 0);
-                    
-                    console.log(prize);
-                    console.log(raffle);
-                    console.log(winner);
+                    else if (status_ == 5)
+                    {
+                        btnTxt = 'Ban';
+                        self.removeClass('btn-danger').addClass('btn-success').data('status', 1);
+                    }
+                    else
+                    {
+                        btnTxt = 'Unban';
+                        self.removeClass('btn-success').addClass('btn-danger').data('status', 5);
+                    }
+
+                    console.log(status_);
+
+                    self.html('<i class="fa fa-fw fa-ban"></i> ' + btnTxt);
+
+                })
+                .fail(function()
+                {
+                    console.log('Failed to process ...');
+                })
+                .always(function( data )
+                {
+                    return true;
+                });
+            })
+        },
+        userSearch: function(){
+            return this.delegate(funcConf.userSearch, 'keypress', function(){
+                var self = $(this);
+                
+                if (self.next('span').length < 1)
+                {
+                    self.after(' <span><br/><i class="fa fa-fw fa-refresh fa-spin"></i> Loading ...</span>');
+                }
+                
+                clearTimeout(funcConf.searchTime);
+                
+                funcConf.searchTime = setTimeout(function(){
+                    $.get('users-search', { keyword: self.val()})
+                    .done(function( data )
+                    {
+                        self.next('span').remove();
+                    })
+                    .fail(function()
+                    {
+                        console.log('Failed to process ...');
+                    })
+                    .always(function( data )
+                    {
+                        $('table.table').find('tbody').html( data );
+                    })
+                }, 2000);
             })
         },
 	}
@@ -167,17 +246,27 @@
     config.doc.raffleChange();
     config.doc.addPrize();
 
+    config.doc.banUser();
+    config.doc.userSearch();
+
 })(jQuery,window,document);
 
 
-function appendWinnerOpt(id, n)
+function winnerPrizes(raffle, type)
 {
-    return true;
-    $('#winner').attr('disabled', true).html( '<option>Loading ...</option>' );
-    $.get('winner-has-prize', { raffle: id, winners: n })
+    var winner = $('select[name=winner] option:selected').val(),
+        link_ = (type==='conso') ? 'conso-prizes' : 'winner-prizes';
+
+    if (winner == '' || winner == 0) {
+        $('.prizes-theater').empty().html('<div class="col-lg-12"><h1>No winners assigned for this raffle.</h1></div>');
+        return false;
+    }
+    
+    $('.prizes-theater').empty().html('<div class="col-lg-12"><i class="fa fa-refresh fa-spin"></i> Loading prizes ...</div>');
+    $.get(link_, { raffle: raffle, winner: winner, type: type })
     .done(function( data )
     {
-        $('#winner').attr('disabled', false).empty().html( data );
+        $('.prizes-theater').html( data );
     })
     .fail(function()
     {
@@ -185,6 +274,7 @@ function appendWinnerOpt(id, n)
     })
     .always(function( data )
     {
+        console.log(link_);
         return true;
     });
 }
@@ -200,9 +290,15 @@ function onDocReady()
     }
     
     $('#winner').html(options_);
+    
+    if ($('select[name=winner] option').length===0)
+    {
+        $('#winner').html( '<option value="0">No winners assigned.</option>' );
+    }
 }
 
-function ordinal_suffix_of(i) {
+function ordinal_suffix_of(i)
+{
     var j = i % 10,
         k = i % 100;
     if (j == 1 && k != 11) {

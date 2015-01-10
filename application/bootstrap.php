@@ -60,10 +60,11 @@ $app->register(new Silex\Provider\SecurityServiceProvider(), array(
 	'security.access_rules' => array(
         //array('/u', 'IS_AUTHENTICATED_ANONYMOUSLY'),
 		array('^/u/', 'ROLE_USER'),
+		array('^/encoder/', 'ROLE_ENCODER'),
 		array('^/dashboard/', 'ROLE_ADMIN'),
 	),
 	'security.role_hierarchy' => array(
-	    'ROLE_ADMIN' => array('ROLE_USER'),
+	    'ROLE_ADMIN' => array('ROLE_USER', 'ROLE_ENCODER'),
 	)
 ));
 
@@ -74,6 +75,7 @@ $app['locale'] = 'en';
 
 $app->mount('/', user\UserProvider::routing($app));
 $app->mount('/login', general\UserBridge::routing($app));
+$app->mount('/encoder', encoder\EncoderProvider::routing($app));
 $app->mount('/dashboard', admin\AdminProvider::routing($app));
 
 $app->get('/thumbnails/{params}/{q}', 'general\Tools::thumb')->bind('img-thumb');

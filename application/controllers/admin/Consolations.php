@@ -10,12 +10,12 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 use general\Tools;
 
-class Winners
+class Consolations
 {
-    public $active = 3;
-    
-    public function winnersOverview(Request $req, Application $app)
-    {
+    public $active = 4;
+
+	public function consolationsOverview(Request $req, Application $app)
+	{
        $raffles = Tools::findBy($app, '\Raffles', array('view_status' => 5, 'raffle_status' => 0), array('created_at' => 'DESC'));
        $prizes = Tools::findBy($app, '\Prizes', array('view_status' => 5), array('created_at' => 'DESC'));
         
@@ -23,23 +23,26 @@ class Winners
             'title' => 'Winners',
             'raffles' => $raffles,
             'prizes' => $prizes,
+        	'type_' => 'conso',
             'isprizes' => self::isPrizeAdded($req, $app, $prizes, (!empty($raffles))?$raffles{0}:null, 1),
             'active_tab' => $this->active,
 			'message' => $app['session']->getFlashBag()->get('message'),
         );
         
-		return $app['twig']->render('dashboard/winners.twig', $view);
-    }
+		return $app['twig']->render('dashboard/Consolations.twig', $view);
+	}
     
-    public function winnerPrizes(Request $req, Application $app)
+    public function consoPrizes(Request $req, Application $app)
     {
         $raffle = (int) $req->get('raffle');
         $winner = (int) $req->get('winner');
+        $type = $req->get('type');
         
         $prizes_ = Tools::findBy($app, '\Prizes', array('view_status' => 5), array('created_at' => 'DESC'));
         $raffle_ = Tools::findOneBy($app, '\Raffles', array('id' => $raffle, 'view_status' => 5));
         
         $view = array(
+        	'type_' => $type,
             'prizes' => $prizes_,
             'isprizes' => self::isPrizeAdded($req, $app, $prizes_, $raffle_, $winner)
         );
@@ -55,7 +58,7 @@ class Winners
         {
             $qb = $app['orm.em']->createQueryBuilder();
             $qb->select('count(table)')
-            ->from('models\Winners', 'table')
+            ->from('models\Consolations', 'table')
             ->where('table.raffle = :raffle')
             ->andWhere('table.prize = :prize')
             ->andWhere('table.winner = :winner')
@@ -71,7 +74,7 @@ class Winners
         return $isPrize;
     }
     
-    public function addPrize(Request $req, Application $app)
+    public function addConsoPrize(Request $req, Application $app)
     {
         $prize = (int) $req->get('prize');
         $raffle = (int) $req->get('raffle');
@@ -81,10 +84,10 @@ class Winners
         $prize_ = Tools::findOneBy($app, '\Prizes', array('id' => $prize, 'view_status' => 5));
         $raffle_ = Tools::findOneBy($app, '\Raffles', array('id' => $raffle, 'view_status' => 5));
 
-        $winner_ = Tools::findOneBy($app, '\Winners', array('raffle' => $raffle, 'prize' => $prize, 'winner' => $winner));
+        $winner_ = Tools::findOneBy($app, '\Consolations', array('raffle' => $raffle, 'prize' => $prize, 'winner' => $winner));
         if (empty($winner_))
         {
-            $winner_ = new \models\Winners;
+            $winner_ = new \models\Consolations;
         }
 
         $winner_->setWinner($winner);

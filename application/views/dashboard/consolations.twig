@@ -19,15 +19,15 @@
     <div class="col-lg-9">
         <div class="form-group">
             <label for="raffle">Raffles</label>
-            <select name="raffle" id="raffle" class="form-control">
+            <select name="raffle" id="raffle" class="form-control" data-type="conso">
             {% for raffle in raffles %}
-                <option value="{{ raffle.getId }}" data-winners="{{ raffle.getWinners }}">{{ raffle.getRaffleTitle }}</option>
+                <option value="{{ raffle.getId }}" data-winners="{{ raffle.getConsolations }}">{{ raffle.getRaffleTitle }}</option>
             {% endfor %}
             </select>
         </div>
         <div class="form-group">
-            <label for="winner">Winners</label>
-            <select name="winner" id="winner" class="form-control">
+            <label for="winner">Consolations</label>
+            <select name="winner" id="winner" class="form-control" data-type="conso">
             </select>
         </div>
         <br/><br/>

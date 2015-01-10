@@ -1,0 +1,22 @@
+{% set adminEmail = (credentials is defined and credentials is not empty) ? credentials[0] : null %}
+
+{% for k, user in users %}
+
+{% set userActionStatus = (adminEmail == user.getEmail) ? ' disabled' : null %}
+
+	<tr data-user-id="{{ user.getId }}">
+		<td>{{ profiles[k].getFirstname }} {{ profiles[k].getLastname }}</td>
+		<td>{{ profiles[k].getBirthday|date('M d, Y') }}</td>
+		<td>{{ user.getEmail }}</td>
+		<td>{{ profiles[k].getMobile }}</td>
+		<td>
+			<div class="btn-group" role="group" aria-label="...">
+			{% if user.getViewStatus == 5 %}
+			  <button type="button" class="btn btn-xs btn-success btn-ban" data-status="1"{{ userActionStatus }}><i class="fa fa-fw fa-ban"></i> Ban</button>
+			  {% else %}
+			  <button type="button" class="btn btn-xs btn-danger btn-ban" data-status="5"{{ userActionStatus }}><i class="fa fa-fw fa-ban"></i> Unban</button>
+			{% endif %}
+			</div>
+		</td>
+	</tr>
+{% endfor %}

@@ -14,18 +14,44 @@ class Raffle
 {
     
     public $active = 1;
+
+    public function raffleStatus($tab)
+    {
+        switch ($tab)
+        {
+            case 2:
+                $x = array(0, 'pending');
+                break;
+            case 3:
+                $x = array(2, 'archives');
+                break;
+            case 1:
+            default:
+                $x = array($tab, 'active');
+                break;
+        }
+
+        return $x;
+    }
     
     public function raffleOverview(Request $req, Application $app)
     {
         $tab = (!empty($req->get('tab'))) ? (int) $req->get('tab') : 1;
-        $raffleStatus = ($tab == 1) ? $tab : 0;
-        $raffles = Tools::findBy($app, '\Raffles', array('view_status' => 5, 'raffle_status' => $raffleStatus), array('created_at' => 'DESC'), 10, 0);
+
+        $sessionTab = $app['session']->getFlashBag()->get('tab');
+        if ($sessionTab)
+        {
+            $tab = $sessionTab[0];
+        }
+
+        $raffleStatus = self::raffleStatus($tab);
+        $raffles = Tools::findBy($app, '\Raffles', array('view_status' => 5, 'raffle_status' => $raffleStatus[0]), array('created_at' => 'DESC'), 10, 0);
         
         $view = array(
             'title' => 'Raffle',
             'raffles' => $raffles,
             'active_tab' => $this->active,
-            'tab' => array($tab, ($tab == 1) ? 'active' : 'pending'),
+            'tab' => array($tab, $raffleStatus[1]),
 			'message' => $app['session']->getFlashBag()->get('message'),
         );
         
@@ -43,6 +69,17 @@ class Raffle
         $winners = (int) $req->get('winners');
         $consolations = (int) $req->get('consolations');
         $tab = (!empty($req->get('tab'))) ? (int) $req->get('tab') : 1;
+        $app['session']->getFlashBag()->set('tab', $tab);
+
+        $now = new \DateTime('now');
+        $newStart = new \DateTime($start);
+        $newEnd = new \DateTime($end);
+
+        if ($newStart > $newEnd || $newEnd > $now)
+        {
+            $app['session']->getFlashBag()->set('message', 'raffle_date_greater_than');
+            return Tools::redirect($app, 'raffle_overview');
+        }
         
         $raffle = new \models\Raffles;
         if ( ! empty($id))
@@ -63,8 +100,8 @@ class Raffle
 
         $raffle->setRaffleDescription($desc);
         $raffle->setRaffleTitle($title);
-        $raffle->setStartDate(new \DateTime($start));
-        $raffle->setEndDate(new \DateTime($end));
+        $raffle->setStartDate($newStart);
+        $raffle->setEndDate($newEnd);
         $raffle->setWinners($winners);
         $raffle->setConsolations($consolations);
         $raffle->setModifiedAt('now');
@@ -121,6 +158,7 @@ class Raffle
     {
         $tab = $req->get('tab');
         $keyword = $req->get('keyword');
+        $raffleStatus = self::raffleStatus($tab);
         
         $query = "SELECT r FROM models\Raffles r
                   WHERE 
@@ -132,13 +170,13 @@ class Raffle
                   r.end_date LIKE :keyword)";
         
         $query = $app['orm.em']->createQuery($query);
-        $query->setParameter("status", ($tab == 1) ? $tab : 0);
+        $query->setParameter("status", $raffleStatus[0]);
         $query->setParameter("keyword", "%" . $keyword . "%");
         
         $view = array(
             'raffles' => $query->getResult(),
             'issearch' => ' for the keyword ' . $keyword,
-            'tab' => array($tab, ($tab == 1) ? 'active' : 'pending'),
+            'tab' => array($tab, $raffleStatus[1]),
         );
         
         return $app['twig']->render('dashboard/includes/list.raffle.twig', $view);

@@ -31,11 +31,28 @@ class AdminProvider
         
         // Winners
 		$ui->match('/winners-overview', 'admin\Winners::winnersOverview')->bind('winners_overview');
-		$ui->match('/winner-has-prize', 'admin\Winners::winnerHasPrize');
+		$ui->match('/winner-prizes', 'admin\Winners::winnerPrizes');
+		$ui->match('/add-prize', 'admin\Winners::addPrize');
+        
+        // Winners
+		$ui->match('/consolations-overview', 'admin\Consolations::consolationsOverview')->bind('consolations_overview');
+		$ui->match('/conso-prizes', 'admin\Consolations::consoPrizes');
+		$ui->match('/add-conso-prize', 'admin\Consolations::addConsoPrize');
+
+		// Users
+		$ui->match('/users-overview', 'admin\Users::usersOverview')->bind('users_overview');
+		$ui->match('/user-action', 'admin\Users::userAction')->bind('user_action');
+		$ui->match('/users-search', 'admin\Users::usersSearch')->bind('users_search');
         
         // Prizes
 		$ui->match('/prizes-overview', 'admin\Prizes::prizesOverview')->bind('prizes_overview');
 		$ui->match('/prizes-action', 'admin\Prizes::prizesAction')->bind('prizes_action');
+
+		$before = function (Request $request, Application $app) {
+            return Tools::isLogged($app);
+		};
+
+		$ui->before($before);
 
 		return $ui;
 	}
