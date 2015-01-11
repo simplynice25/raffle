@@ -18,6 +18,9 @@
             actionAttr = self.find('form').data('action');
 
        self.find('form').find("textarea, input[type=text], input[type=date], input[type=number]").val("");
+        for (instance in CKEDITOR.instances){
+           CKEDITOR.instances[instance].setData(" ");
+        }
 
        if (data_)
        {
@@ -329,6 +332,7 @@ function onDocReady()
     if ($('select[name=winner] option').length===0)
     {
         $('#winner').html( '<option value="0">No '+ optTxt +' assigned.</option>' );
+        $('.prizes-theater').html('<div class="col-lg-12"><h1>No '+ optTxt +' assigned for this raffle.</h1></div>');
     }
 }
 

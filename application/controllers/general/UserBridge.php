@@ -63,12 +63,19 @@ class UserBridge {
 	
 	public function preRegistration(Request $req, Application $app)
 	{
-		/* TODO: Validate OR # */
 		$preRegData = array(
 			'firstname' => $req->get('firstname'),
 			'lastname' => $req->get('lastname'),
 			'or_num' => $req->get('or_num'),
 		);
+
+		/* Validate OR # */
+		$validateORNum = Tools::findBy($app, '\EncodedReceipts', array('receipt_number' => $preRegData['or_num']));
+		if (empty($validateORNum))
+		{
+            $app['session']->getFlashBag()->set('message', 'invalid_receipt_number');
+            return Tools::redirect($app, 'login');
+		}
 
 		$app['session']->set('registration', $preRegData);
         

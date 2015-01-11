@@ -62,7 +62,8 @@ class EncoderProvider
 		}
 
 		// Remove " 'raffle' => $raffle " if you want one receipt for one raffle only
-		$validateReceipt = Tools::findBy($app, '\EncodedReceipts', array('raffle' => $raffle, 'receipt_number' => $receipt_));
+		// 'raffle' => $raffle, 
+		$validateReceipt = Tools::findBy($app, '\EncodedReceipts', array('receipt_number' => $receipt_));
 		if ( ! empty($validateReceipt))
 		{
             $app['session']->getFlashBag()->set('message', 'receipt_number_exist');

@@ -1,6 +1,7 @@
 {% set userSess = app.session.get('credentials') %}
 {% set username = (userSess is defined and userSess is not empty and userSess[0] is not empty) ? userSess[0] : null %}
 {% set role = (userSess is defined and userSess is not empty and userSess[1] is not empty) ? userSess[1] : null %}
+{% set raffles = app.session.get('raffleNavs') %}
     <!-- Static navbar -->
     <nav class="navbar navbar-default navbar-static-top" role="navigation">
       <div class="container">
@@ -15,13 +16,22 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li><a href="#">Mechanics & Prizes</a></li>
             <li><a href="#">About</a></li>
+            <li><a href="#">Mechanics</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Raffles & Prizes <span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                {% for raffle in raffles %}
+                <li><a href="{{ path('raffle_details', {id: raffle[0]}) }}">{{ raffle[1] }}</a></li>
+                {% endfor %}
+              </ul>
+            </li>
             <li><a href="#">Contact</a></li>
             <li><a href="#">Developers</a></li>
           </ul>
           {% if userSess is defined and userSess is not empty and userSess[0] is not empty %}
           <ul class="nav navbar-nav navbar-right">
+            <li><a href="#"><span class="badge">0</span></a></li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-fw fa-user"></i> {{ username }} <span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">

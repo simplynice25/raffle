@@ -6,6 +6,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Translation\Loader\YamlFileLoader;
 use Symfony\Component\Security\Core\Encoder\MessageDigestPasswordEncoder;
 
+use general\Tools;
+
 define('UPLOAD_DIR', dirname(__FILE__) . '/../web/upload/');
 define('APP_DIR', dirname(__FILE__) . '/plugins/');
 
@@ -59,6 +61,7 @@ $app->register(new Silex\Provider\SecurityServiceProvider(), array(
 	),
 	'security.access_rules' => array(
         //array('/u', 'IS_AUTHENTICATED_ANONYMOUSLY'),
+        //array('^/raffle/*', 'IS_AUTHENTICATED_ANONYMOUSLY'),
 		array('^/u/', 'ROLE_USER'),
 		array('^/encoder/', 'ROLE_ENCODER'),
 		array('^/dashboard/', 'ROLE_ADMIN'),
@@ -72,6 +75,18 @@ $app->register(new Silex\Provider\SwiftmailerServiceProvider());
 $app['swiftmailer.options'] = $mail_conf;
 
 $app['locale'] = 'en';
+
+/* Get raffles for navbar */
+$raffleData = array();
+$raffles = Tools::findBy($app, '\Raffles', array('raffle_status' => 1), array('created_at' => 'DESC'));
+
+foreach ($raffles as $raffle)
+{
+	$raffleData[] = array($raffle->getId(), $raffle->getRaffleTitle());
+}
+
+$app['session']->set('raffleNavs', $raffleData);
+/* End of getting raffles for navbar */
 
 $app->mount('/', user\UserProvider::routing($app));
 $app->mount('/login', general\UserBridge::routing($app));

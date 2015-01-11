@@ -21,6 +21,9 @@ class UserProvider
         $ui->match('/settings', 'user\UserProvider::userSettings')->bind('user_settings');
         $ui->match('/settings-action', 'user\UserProvider::userSettingsAction')->bind('user_settings_action');
 
+        // Raffles
+        $ui->match('/raffle/{id}', 'user\UserProvider::raffleDetails')->bind('raffle_details');
+
 		$before = function (Request $request, Application $app) {
             return Tools::isLogged($app);
 		};
@@ -110,5 +113,22 @@ class UserProvider
         $app['session']->getFlashBag()->set('message', $msg);
         
         return Tools::redirect($app, 'user_settings');
+    }
+
+    public function raffleDetails(Request $req, Application $app, $id = null)
+    {
+        if (is_null($id))
+        {
+            return false;
+        }
+
+        $raffle = Tools::findOneBy($app, '\Raffles', array('id' => $id));
+
+        $view = array(
+            'title' => 'Raffle details',
+            'raffle' => $raffle,
+        );
+
+        return $app['twig']->render('front/raffle.details.twig', $view);
     }
 }

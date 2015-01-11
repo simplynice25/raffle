@@ -86,12 +86,18 @@ class Tools
                 $role = $roles[0];
             }
         }
-        
+
         if (empty($username) || empty($role))
         {
             $err_ = $app['session']->getFlashBag()->get('err_');
+           // print_r($err_);
+           // exit;
+            if (! empty($err_) && !isset($err_[1]) || empty($err_))
+            {
+                return null;
+            }
             
-            $app['session']->getFlashBag()->set('err_', (!empty($err_) && isset($err_[0])) ? $err_ : null);
+            $app['session']->getFlashBag()->set('err_', ( ! empty($err_) && isset($err_[0])) ? $err_ : null);
             return self::redirect($app, 'login');
         }
         

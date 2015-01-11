@@ -32,7 +32,7 @@ class UserProvider implements UserProviderInterface
 
 			if ( ! $resp->is_valid) {
 				$error = "The CAPTCHA wasn't entered correctly. Please try it again.";
-				$this->app['session']->getFlashBag()->set('err_', $error);
+				$this->app['session']->getFlashBag()->set('err_', array($error, 'login_passed'));
 
 				$url = $this->app['url_generator']->generate('login');
 				return $this->app->redirect($url);
@@ -44,6 +44,8 @@ class UserProvider implements UserProviderInterface
 		if (!is_object($user)) {
 			throw new UsernameNotFoundException(sprintf('Username "%s" does not exist.', $username));
 		}
+
+		$this->app['session']->getFlashBag()->set('err_', array('null', 'login_passed'));
 
 		return new User($user->getEmail(), $user->getPassword(), explode(',', $user->getRoles()), true, true, true, true);
     }

@@ -40,3 +40,4 @@ receipt_added: Official receipt number added.
 receipt_email_sent: Link on where to register sent to client email address.
 receipt_email_failed: Failed to send email to client email address.
 receipt_number_exist: Receipt number already exist.
+invalid_receipt_number: Invalid receipt number, please try again.
