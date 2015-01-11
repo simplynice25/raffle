@@ -75,7 +75,7 @@ class Raffle
         $newStart = new \DateTime($start);
         $newEnd = new \DateTime($end);
 
-        if ($newStart > $newEnd || $newEnd > $now)
+        if ($newStart > $newEnd || $now >= $newEnd)
         {
             $app['session']->getFlashBag()->set('message', 'raffle_date_greater_than');
             return Tools::redirect($app, 'raffle_overview');

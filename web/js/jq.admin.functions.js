@@ -47,6 +47,7 @@
         addPrize: '.btn.add-prize',
         banUser: '.btn.btn-ban',
         userSearch: 'input#search',
+        userRole: 'select[name=user-role]',
 	}
 	
 	var funcInit = {
@@ -234,6 +235,36 @@
                 }, 2000);
             })
         },
+        userRole: function () {
+            return this.delegate(funcConf.userRole, 'change', function(){
+                if ( ! confirm('Are you sure you want to change this user role?')) return false;
+
+                var self = $(this),
+                    userId = self.parent().parent().data('user-id');
+
+                self.attr('disabled', true);
+
+                $.get('user-role', { role: self.val(), userId: userId})
+                .done(function( data )
+                {
+                    data = $.parseJSON(data);
+                    if (data.message == 'error')
+                    {
+                        alert('Something went wrong, try again..');
+                    } else {
+                        alert('User role changed!');
+                    }
+                })
+                .fail(function()
+                {
+                    console.log('Failed to process ...');
+                })
+                .always(function( data )
+                {
+                    self.attr('disabled', false);
+                })
+            })
+        },
 	}
 	
 	$.extend(config.doc, funcInit);
@@ -248,6 +279,7 @@
 
     config.doc.banUser();
     config.doc.userSearch();
+    config.doc.userRole();
 
 })(jQuery,window,document);
 
@@ -255,10 +287,11 @@
 function winnerPrizes(raffle, type)
 {
     var winner = $('select[name=winner] option:selected').val(),
-        link_ = (type==='conso') ? 'conso-prizes' : 'winner-prizes';
+        link_ = (type==='conso') ? 'conso-prizes' : 'winner-prizes',
+        h1Txt = (type==='conso') ? 'conso' : 'winners';
 
     if (winner == '' || winner == 0) {
-        $('.prizes-theater').empty().html('<div class="col-lg-12"><h1>No winners assigned for this raffle.</h1></div>');
+        $('.prizes-theater').empty().html('<div class="col-lg-12"><h1>No '+ h1Txt +' assigned for this raffle.</h1></div>');
         return false;
     }
     
@@ -283,7 +316,9 @@ function onDocReady()
 {
     if ($('#winner').length === 0) return false;
     
-    var winners = $('select[name=raffle] option:selected').data('winners')+1, options_ = '';
+    var type = $('select[name=raffle]').data('type'),
+        optTxt = (type==='conso') ? 'conso' : 'winners',
+        winners = $('select[name=raffle] option:selected').data('winners')+1, options_ = '';
     for (var i=1;i<winners;i++)
     {
         options_ += '<option value="'+i+'">'+ordinal_suffix_of(i)+'</option>';
@@ -293,7 +328,7 @@ function onDocReady()
     
     if ($('select[name=winner] option').length===0)
     {
-        $('#winner').html( '<option value="0">No winners assigned.</option>' );
+        $('#winner').html( '<option value="0">No '+ optTxt +' assigned.</option>' );
     }
 }
 

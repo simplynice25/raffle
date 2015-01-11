@@ -10,6 +10,13 @@
 		<td>{{ user.getEmail }}</td>
 		<td>{{ profiles[k].getMobile }}</td>
 		<td>
+			<select name="user-role" class="form-control"{{ userActionStatus }}>
+				<option value="ROLE_USER"{% if user.getRoles == 'ROLE_USER' %} selected{% endif %}>User</option>
+				<option value="ROLE_ENCODER"{% if user.getRoles == 'ROLE_ENCODER' %} selected{% endif %}>Encoder</option>
+				<option value="ROLE_ADMIN"{% if user.getRoles == 'ROLE_ADMIN' %} selected{% endif %}>Administrator</option>
+			</select>
+		</td>
+		<td>
 			<div class="btn-group" role="group" aria-label="...">
 			{% if user.getViewStatus == 5 %}
 			  <button type="button" class="btn btn-xs btn-success btn-ban" data-status="1"{{ userActionStatus }}><i class="fa fa-fw fa-ban"></i> Ban</button>

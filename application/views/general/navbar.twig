@@ -28,6 +28,9 @@
               {% if role is not null and role == 'ROLE_ADMIN' %}
                 <li><a href="{{ path('dashboard') }}">Dashboard</a></li>
               {% endif %}
+              {% if role is not null and role == 'ROLE_ENCODER' or role == 'ROLE_ADMIN' %}
+                <li><a href="{{ path('encoder_dashboard') }}">Encoder</a></li>
+              {% endif %}
                 <li><a href="{{ path('user_settings') }}">Settings</a></li>
                 <li><a href="{{ path('logout') }}">Sign out</a></li>
               </ul>

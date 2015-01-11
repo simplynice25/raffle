@@ -43,6 +43,7 @@ class AdminProvider
 		$ui->match('/users-overview', 'admin\Users::usersOverview')->bind('users_overview');
 		$ui->match('/user-action', 'admin\Users::userAction')->bind('user_action');
 		$ui->match('/users-search', 'admin\Users::usersSearch')->bind('users_search');
+		$ui->match('/user-role', 'admin\Users::userRole')->bind('user_role');
         
         // Prizes
 		$ui->match('/prizes-overview', 'admin\Prizes::prizesOverview')->bind('prizes_overview');

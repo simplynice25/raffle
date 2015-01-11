@@ -94,4 +94,33 @@ class Users
 
 		return $app['twig']->render('dashboard/includes/list.users.twig', $view);
 	}
+
+	public function userRole(Request $req, Application $app)
+	{
+		$role = $req->get('role');
+		$userId = (int) $req->get('userId');
+
+		/*
+		* Check if the role exist
+		*/
+		$roles = array('ROLE_USER', 'ROLE_ENCODER', 'ROLE_ADMIN');
+		if (!in_array($role, $roles))
+		{
+			return json_encode(array('message'=> 'error'));
+		}
+
+		$user = Tools::findOneBy($app, '\Users', array('id' => $userId));
+		if (empty($user))
+		{
+			return json_encode(array('message'=> 'error'));
+		}
+
+		$user->setRoles($role);
+        $user->setModifiedAt('now');
+
+		$app['orm.em']->persist($user);
+		$app['orm.em']->flush();
+
+		return json_encode(array('message'=>'success'));
+	}
 }

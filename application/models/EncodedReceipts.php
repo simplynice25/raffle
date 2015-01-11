@@ -23,6 +23,9 @@ class EncodedReceipts {
     /** @Column(type="string", nullable=true) **/
     protected $full_name;
 
+    /** @Column(type="string", nullable=true) **/
+    protected $email;
+
 	/** @Column(type="integer", nullable=true) **/
 	protected $view_status;
 
@@ -86,6 +89,29 @@ class EncodedReceipts {
     public function getFullName()
     {
         return $this->full_name;
+    }
+
+    /**
+     * Set email
+     *
+     * @param string $email
+     * @return EncodedReceipts
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+    
+        return $this;
+    }
+
+    /**
+     * Get email
+     *
+     * @return string 
+     */
+    public function getEmail()
+    {
+        return $this->email;
     }
 
     /**
