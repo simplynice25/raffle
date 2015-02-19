@@ -24,7 +24,24 @@ class UserProvider
         // Raffles
         $ui->match('/raffle/{id}', 'user\UserProvider::raffleDetails')->bind('raffle_details');
 
+        // Static pages
+        $ui->match('/archives', 'user\UserProvider::archives')->bind('archives');
+        $ui->match('/about', 'user\UserProvider::aboutUs')->bind('about-us');
+        $ui->match('/contact', 'user\UserProvider::contact')->bind('contact');
+        $ui->match('/developers', 'user\UserProvider::developers')->bind('developers');
+
 		$before = function (Request $request, Application $app) {
+            
+            $login = $app['session']->getFlashBag()->get('login');
+            if ( ! empty($login) && isset($login[0]) && $login[0] == 'fail') {
+                return Tools::redirect($app, 'login');
+            }
+
+            $role = $app['session']->getFlashBag()->get('role');
+            if ( ! empty($role) && isset($role[0]) && $role[0] == "ROLE_ADMIN") {
+                return Tools::redirect($app, 'dashboard');
+            }
+
             return Tools::isLogged($app);
 		};
 
@@ -33,10 +50,29 @@ class UserProvider
 		return $ui;
 	}
 
+    public function getUserNames($app)
+    {
+        $dql = "SELECT p.firstname fname, p.lastname lname FROM models\Profiles p
+                JOIN p.user u WHERE u.roles = :role AND u.view_status = 5";
+
+        $query = $app['orm.em']->createQuery($dql);
+        $query->setParameter("role", "ROLE_USER");
+        $query->setFirstResult(0);
+        $query->setMaxResults(100);
+        $names = $query->getResult();
+
+        return $names;
+    }
+
 	public function index(Request $req, Application $app)
 	{
+        $archives = Tools::findBy($app, '\Raffles', array('raffle_status' => 2), array('end_date' => 'DESC'), 5, 0);
+        $names = self::getUserNames($app);
         $view = array(
-            'title' => 'Homepage',
+            'title' => 'Sherie Anne\'s',
+            'archives' => $archives,
+            'names' => $names,
+            'viewing' => 1,
         );
         
 		return $app['twig']->render('front/index.twig', $view);
@@ -54,6 +90,65 @@ class UserProvider
         );
         
 		return $app['twig']->render('front/settings.twig', $view);
+    }
+
+    public function archives(Request $req, Application $app)
+    {
+        $ym = null;
+        $year = $req->get('year');
+        $month = $req->get('month');
+        if (empty($year) && empty($month))
+        {
+            $archives = Tools::findBy($app, '\Raffles', array('raffle_status' => 2), array('end_date' => 'DESC'), 10, 5);
+        } else {
+            $ym = $year ."-". $month;
+            $dql = "SELECT r FROM models\Raffles r WHERE r.end_date LIKE :end_date AND r.raffle_status = :raffle_status
+                    ORDER BY r.end_date DESC";
+
+            $query = $app['orm.em']->createQuery($dql);
+            $query->setParameter("raffle_status", 2);
+            $query->setParameter("end_date", '%'. $ym .'%');
+            $archives = $query->getResult();
+        }
+
+        $names = self::getUserNames($app);
+        $view = array(
+            'title' => 'Archives',
+            'archives' => $archives,
+            'names' => $names,
+            'hide' => true,
+            'date' => (empty($year) && empty($month)) ? date('Y-m-d') : $ym . "-01",
+            'viewing' => 5,
+        );
+        
+        return $app['twig']->render('front/index.twig', $view);
+    }
+
+    public function aboutUs(Application $app)
+    {
+        $view = array(
+            'title' => 'About Us',
+            'viewing' => 2,
+        );
+        return $app['twig']->render('front/about.twig', $view);
+    }
+
+    public function contact(Application $app)
+    {
+        $view = array(
+            'title' => 'Contact',
+            'viewing' => 3,
+        );
+        return $app['twig']->render('front/contact.twig', $view);
+    }
+
+    public function developers(Application $app)
+    {
+        $view = array(
+            'title' => 'Developers',
+            'viewing' => 6,
+        );
+        return $app['twig']->render('front/developers.twig', $view);
     }
     
     public function userSettingsAction(Request $req, Application $app)
@@ -127,6 +222,7 @@ class UserProvider
         $view = array(
             'title' => 'Raffle details',
             'raffle' => $raffle,
+            'viewing' => 4,
         );
 
         return $app['twig']->render('front/raffle.details.twig', $view);

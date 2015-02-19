@@ -14,7 +14,7 @@
 
     <!-- Bootstrap -->
     <link href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.1/lumen/bootstrap.min.css" rel="stylesheet">
-	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
     <link href="{{ baseUrl }}css/style.css" rel="stylesheet">
 	{% block styles %}
 	{% endblock %}
@@ -27,6 +27,9 @@
     <![endif]-->
   </head>
   <body>
+  <div style="width:100%;padding:0;margin:0">
+    <a href="{{baseUrl}}"><img src="{{baseUrl}}img/header.jpg" style="width:100%;height:auto"/></a>
+  </div>
   {% block navbar %}
     {% include 'general/navbar.twig' %}
   {% endblock %}

@@ -1,0 +1,21 @@
+{% set dues = app|due %}
+<div class="modal fade" id="raffleDraw">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title">Raffle Draw</h4>
+      </div>
+      <div class="modal-body">
+        <ul class="list-group">
+        {% for due in dues %}
+          <li class="list-group-item">
+          <a href="{{path('raffle_generate', {id: due['id']})}}" class="pull-right">Generate</a>
+          {{ due['raffle_title'] }}
+          </li>
+        {% endfor %}
+        </ul>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

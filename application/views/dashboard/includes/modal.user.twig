@@ -1,37 +1,23 @@
-{% extends 'layout.twig' %}
-
-{% block styles %}
-<link href="{{ baseUrl }}css/front-style.css" rel="stylesheet">
-{% endblock %}
-
-{% block content %}
-
-{% if message is not empty %}
-<div class="alert alert-info"><i class="fa fa-fw fa-exclamation-triangle"></i> {{ message[0]|trans }}</div>
-{% endif %}
-
-<!-- REG -->
-<div class="col-lg-12 login-registration">
-    <h1>Registration</h1>
-    
-    <div class="panel panel-default">
-      <div class="panel-body">
-        <form role="form" action="{{ path('registration-process') }}" method="POST">
-            <div class="form-group">
-                <label for="or_num"><small>Official Receipt #</small></label>
-                <input type="text" id="or_num" class="form-control" disabled value="{{ or_num }}" placeholder="1234-KQWE-6753"/>
-            </div>
+<div class="modal fade" id="userModal">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title">New User</h4>
+      </div>
+      <form action="{{ path('admin_reg_user') }}" data-action="{{ path('admin_reg_user') }}" method="POST">
+      <div class="modal-body">
             <div class="row">
                 <div class="col-lg-6">
                     <div class="form-group">
                         <label for="firstname"><small>Firstname</small></label>
-                        <input type="text" id="firstname" name="firstname" class="form-control" value="{{ firstname }}" placeholder="Juan" autofocus required/>
+                        <input type="text" id="firstname" name="firstname" class="form-control" value="" placeholder="Juan" autofocus required/>
                     </div>
                 </div>
                 <div class="col-lg-6">
                     <div class="form-group">
                         <label for="lastname"><small>Lastname</small></label>
-                        <input type="text" id="lastname" name="lastname" class="form-control" value="{{ lastname }}" placeholder="Dela Cruz" required/>
+                        <input type="text" id="lastname" name="lastname" class="form-control" value="" placeholder="Dela Cruz" required/>
                     </div>
                 </div>
             </div>
@@ -42,13 +28,25 @@
                         <input type="email" id="email" class="form-control" name="email" placeholder="user@raffle.com" required/>
                     </div>
                 </div>
-                <div class="col-lg-3">
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="role">Role</label>
+                        <select id="role" name="role" class="form-control">
+                            <option value="ROLE_USER">User</option>
+                            <option value="ROLE_ENCODER">Encoder</option>
+                            <option value="ROLE_ADMIN">Administrator</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
                     <div class="form-group">
                         <label for="password"><small>Password</small></label>
                         <input type="password" id="password" class="form-control" name="password" placeholder="Password" required/>
                     </div>
                 </div>
-                <div class="col-lg-3">
+                <div class="col-lg-6">
                     <div class="form-group">
                         <label for="c_password"><small>Confirm Password</small></label>
                         <input type="password" id="c_password" class="form-control" name="c_password" placeholder="Confirm Password" required/>
@@ -73,11 +71,13 @@
                 <label for="address"><small>Address</small></label>
                 <textarea id="address" name="address" class="form-control" required></textarea>
             </div>
-            <button type="submit" class="btn btn-primary">Sign Up</button>
-            <button type="reset" class="btn btn-default">Reset</button>
-        </form>
       </div>
-    </div>
-</div>
-<!-- REG OFF -->
-{% endblock %}
+      <div class="modal-footer">
+            <button type="reset" class="btn btn-default">Reset</button>
+            <button type="submit" name="sign_up" value="2" class="btn btn-primary">Sign Up</button>
+            <button type="submit" name="sign_up" value="5" class="btn btn-success">Sign Up &amp; Activate</button>
+      </div>
+      </form>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

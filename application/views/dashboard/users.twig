@@ -11,6 +11,7 @@
         {% include 'dashboard/includes/admin.sidebar.twig' %}
     </div>
     <div class="col-lg-9">
+        <button class="btn btn-success btn-md" data-toggle="modal" data-target="#userModal"><i class="fa fa-fw fa-plus"></i> New User</button>
         <div class="form-group">
             <label for="search"></label>
             <input type="text" name="search" id="search" class="form-control" placeholder="Search user" autofocus>
@@ -36,6 +37,7 @@
             <div class="alert alert-warning"><i class="fa fa-fw fa-exclamation-triangle"></i> No users yet.</div>
         {% endif %}
     </div>
+    {% include 'dashboard/includes/modal.user.twig' only %}
 {% endblock %}
 
 {% block scripts %}

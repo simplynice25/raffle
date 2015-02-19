@@ -36,7 +36,8 @@ class Raffle
     
     public function raffleOverview(Request $req, Application $app)
     {
-        $tab = (!empty($req->get('tab'))) ? (int) $req->get('tab') : 1;
+        $tab = (int) $req->get('tab');
+        $tab = (!empty($tab)) ? $tab : 1;
 
         $sessionTab = $app['session']->getFlashBag()->get('tab');
         if ($sessionTab)
@@ -60,6 +61,7 @@ class Raffle
     
     public function raffleAction(Request $req, Application $app)
     {
+        $tab = (int) $req->get('tab');
         $msg = "raffle_added";
         $id = $req->get('id');
         $title = $req->get('title');
@@ -68,7 +70,7 @@ class Raffle
         $end = $req->get('end');
         $winners = (int) $req->get('winners');
         $consolations = (int) $req->get('consolations');
-        $tab = (!empty($req->get('tab'))) ? (int) $req->get('tab') : 1;
+        $tab = (!empty($tab)) ? $tab : 1;
         $app['session']->getFlashBag()->set('tab', $tab);
 
         $now = new \DateTime('now');
@@ -115,7 +117,8 @@ class Raffle
     
     public function raffleDelete(Request $req, Application $app, $id = NULL)
     {
-        $tab = (!empty($req->get('tab'))) ? (int) $req->get('tab') : 1;
+        $tab = (int) $req->get('tab');
+        $tab = (!empty($tab)) ? $tab : 1;
         $object = Tools::findById($app, '\Raffles', $id);
         
         Tools::delete($app, $object);
@@ -127,8 +130,9 @@ class Raffle
     
     public function raffleActive(Request $req, Application $app, $id = NULL)
     {
+        $tab = (int) $req->get('tab');
         $msg = "raffle_activate_failed";
-        $tab = (!empty($req->get('tab'))) ? (int) $req->get('tab') : 1;
+        $tab = (!empty($tab)) ? $tab : 1;
         
         $object = Tools::findById($app, '\Raffles', $id);
         if ( ! empty($object))
@@ -180,5 +184,107 @@ class Raffle
         );
         
         return $app['twig']->render('dashboard/includes/list.raffle.twig', $view);
+    }
+
+    public function raffleGenerate(Request $req, Application $app)
+    {
+        error_reporting(E_ALL);
+        $ids = $consos = $winners =null;
+        $raffleId = (int) $req->get('id');
+        $raffle = Tools::findById($app, '\Raffles', array('id' => $raffleId));
+
+        $winnerCnt = $raffle->getWinners();
+        $consoCnt = $raffle->getConsolations();
+
+        if ($winnerCnt > 0)
+        {
+            $winners = self::getWinners($app, $raffle, $winnerCnt);
+
+            if ( ! empty($winners))
+            {
+                foreach ($winners as $key => $winner)
+                {
+                    $ids .= $winner['user_id'] . ", ";
+
+                    $user = Tools::findById($app, '\Users', $winner['user_id']);
+                    
+                    $wArchive = new \models\WinnersArchive;
+                    $wArchive->setOrderNumber($key+1);
+                    $wArchive->setUser($user);
+                    $wArchive->setRaffle($raffle);
+                    $wArchive->setViewStatus(5);
+                    $wArchive->setCreatedAt('now');
+                    $wArchive->setModifiedAt('now');
+
+                    $app['orm.em']->persist($wArchive);
+                    $app['orm.em']->flush();
+                }
+
+                $ids = trim($ids, ', ');
+            }
+        }
+
+        if ($consoCnt > 0)
+        {
+            $consos = self::getWinners($app, $raffle, $consoCnt, $ids);
+            if ( ! empty($consos))
+            {
+                foreach ($consos as $key => $conso)
+                {
+                    $user = Tools::findById($app, '\Users', $conso['user_id']);
+                    
+                    $cArchive = new \models\ConsosArchive;
+                    $cArchive->setOrderNumber($key+1);
+                    $cArchive->setUser($user);
+                    $cArchive->setRaffle($raffle);
+                    $cArchive->setViewStatus(5);
+                    $cArchive->setCreatedAt('now');
+                    $cArchive->setModifiedAt('now');
+
+                    $app['orm.em']->persist($cArchive);
+                    $app['orm.em']->flush();
+                }
+            }
+        }
+
+        $raffle->setRaffleStatus(2);
+        $raffle->setModifiedAt('now');
+
+        $app['orm.em']->persist($raffle);
+        $app['orm.em']->flush();
+
+        //echo "<pre>";
+        //print_r($winners);
+        //print_r($consos);
+        //exit;
+
+        $app['session']->getFlashBag()->set('message', 'raffle_generated');
+
+        return Tools::redirect($app, 'raffle_overview', array('tab' => 1));
+    }
+
+    public function getWinners($app, $raffle, $number, $ids = null)
+    {
+        $extraQ = "";
+        if (!empty($ids))
+        {
+            $extraQ = " AND user.id NOT IN ($ids) ";
+        }
+
+        $dql = "SELECT
+                user.id user_id,
+                count(e.user) user_count
+                FROM models\EncodedReceipts e
+                JOIN e.user as user
+                JOIN e.raffle as r
+                WHERE e.raffle = :raffle AND e.view_status = 2 AND r.raffle_status = 1$extraQ
+                GROUP BY e.user ORDER BY user_count DESC, e.id ASC";
+
+        $query = $app['orm.em']->createQuery($dql);
+        $query->setParameter("raffle", $raffle);
+        $query->setMaxResults($number);
+        $result = $query->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
+
+        return $result;
     }
 }

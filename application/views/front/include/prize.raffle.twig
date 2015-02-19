@@ -1,0 +1,17 @@
+<h1><i class="fa fa-fw fa-trophy" style="color:red"></i> {{ heading }}</h1>
+<hr>
+{% if prizes is defined and prizes is not null and prizes|length > 0 %}
+{% for prize in prizes %}
+  <div class="col-sm-6 col-md-4">
+    <div class="thumbnail">
+      <img src="{{ path('img-thumb', {params: '260x260c', q: prize.getPrize.getPrizeImage }) }}" alt="{{ prize.getPrize.getPrizeTitle }}" />
+      <div class="caption">
+        <h5>{{ prize.getPrize.getPrizeTitle }}</h5>
+      </div>
+    </div>
+  </div>
+{% endfor %}
+<div style="width:100%;float:left;position:relative;"><br/><hr/></div>
+{% else %}
+<div class="alert alert-warning"><p><i class="fa fa-fw fa-exclamation-triangle"></i> No prize!</p></div>
+{% endif %}

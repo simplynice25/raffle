@@ -1,0 +1,51 @@
+{% set imgNum = 5 %}
+{% set caption = {'0' : 'Department Store', '1' : 'Department Store', '2' : 'Department Store', '3' : 'Food Bar', '4' : 'Grocery', '5' : 'Grocery'} %}
+{% extends 'layout.twig' %}
+
+{% block content %}
+<div class="col-lg-12">
+    <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+      <!-- Indicators -->
+      <ol class="carousel-indicators">
+        {% for i in 0..imgNum %}
+        <li data-target="#carousel-example-generic" data-slide-to="{{i}}" class="{% if i == 0 %}active{% endif %}"></li>
+        {% endfor %}
+      </ol>
+
+      <!-- Wrapper for slides -->
+      <div class="carousel-inner" role="listbox">
+        {% for i in 0..imgNum %}
+        <div class="item{% if i == 0 %} active{% endif %}">
+          <img src="{{ path('img-thumb', {params: '1140x460c', q: i~'-about-slideshow.jpg' }) }}" alt="..." />
+          <div class="carousel-caption">
+            {{ caption[i] }}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Controls -->
+      <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+      </a>
+      <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+      </a>
+    </div>
+      <h1><i class="fa fa-fw fa-cart-plus"></i> About us</h1>
+      <p>
+          <b>Sherie Anne’s Department Store</b> is one of the old and big establishment built in Binalbagan, owned by Mr. Antonio.Chua . It has served Binalbaganon’s for the past 27 years. Just like most entrepreneur, they began with a humble beginning. Sherie Anne’s started as a small retail business in March 1987.
+      <p>
+          The store was previously located just across from Shell Gasoline Station at J.P Rizal Street, Bin. Neg. Occ., which is just next to the the new Sherie Anne’s building. For many years, their there business has gained more customers. Due to increase in consumers demand the owner decided to expand his business to offer more products to the customer. As the business grew bigger they needed to have a bigger space too. So the owner decided to transfer to a much bigger place to accommodate all the product and customer. They built the new building next to Shell Gasoline Station. The new building is now known to be Sherie Anne’s Department store.
+      </p>
+      <p>
+          They offer varieties of product that meets the customers need. At first, they only sell grocery products and later on they offer dry good products too. The new building started to operate on November 30, 1996. They also accept consignment from regular customers. 
+      </p>
+      <p>
+          Now, Sherie Anne’s Department Store is conducting a Raffle Promo especially during their anniversary. This promo is to show gratitude to values customers who have been part of Sherie Anne’s success.
+      </p>
+      <p>
+    <div style="width:100%;padding:0;margin:0;min-height:250px;"></div>
+{% endblock %}

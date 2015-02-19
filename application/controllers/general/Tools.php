@@ -80,18 +80,16 @@ class Tools
                 
                 if ( ! is_null($action))
                 {
-                    return self::findOneBy($app, '\Users', array('view_status' => 5));
+                    return self::findOneBy($app, '\Users', array('email' => $username, 'view_status' => 5));
                 }
                 
                 $role = $roles[0];
             }
         }
 
-        if (empty($username) || empty($role))
+        if (is_null($username) || is_null($role))
         {
             $err_ = $app['session']->getFlashBag()->get('err_');
-           // print_r($err_);
-           // exit;
             if (! empty($err_) && !isset($err_[1]) || empty($err_))
             {
                 return null;
@@ -102,7 +100,7 @@ class Tools
         }
         
         $app['session']->set('credentials', array($username, $role));
-        
+
         return NULL;
     }
     

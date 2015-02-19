@@ -28,6 +28,7 @@ class AdminProvider
 		$ui->match('/raffle-delete/{id}', 'admin\Raffle::raffleDelete')->bind('raffle_delete');
 		$ui->match('/raffle-active/{id}', 'admin\Raffle::raffleActive')->bind('raffle_active');
 		$ui->match('/raffle-search', 'admin\Raffle::raffleSearch')->bind('raffle_search');
+        $ui->match('/raffle-generate', 'admin\Raffle::raffleGenerate')->bind('raffle_generate');
         
         // Winners
 		$ui->match('/winners-overview', 'admin\Winners::winnersOverview')->bind('winners_overview');
@@ -44,6 +45,8 @@ class AdminProvider
 		$ui->match('/user-action', 'admin\Users::userAction')->bind('user_action');
 		$ui->match('/users-search', 'admin\Users::usersSearch')->bind('users_search');
 		$ui->match('/user-role', 'admin\Users::userRole')->bind('user_role');
+		$ui->match('/admin-reg-user', 'admin\Users::registrationProcess')->bind('admin_reg_user');
+		$ui->match('/admin-user-activation/{uid}', 'admin\Users::activationProcess')->bind('admin_user_activation');
         
         // Prizes
 		$ui->match('/prizes-overview', 'admin\Prizes::prizesOverview')->bind('prizes_overview');

@@ -11,7 +11,7 @@
 </thead>
 <tbody>
 {% for raffle in raffles %}
-    <tr data-raffle='{"id": "{{ raffle.getId }}","title": "{{ raffle.getRaffleTitle }}","desc":"{{ raffle.getRaffleDescription }}","start": "{{ raffle.getStartDate|date('Y-m-d') }}","end": "{{ raffle.getEndDate|date('Y-m-d') }}","winners": "{{ raffle.getWinners }}","consos": "{{ raffle.getConsolations }}"}'>
+    <tr data-raffle='{"id": "{{ raffle.getId }}","title": "{{ raffle.getRaffleTitle }}","desc":"{{ raffle.getRaffleDescription|url_encode }}","start": "{{ raffle.getStartDate|date('Y-m-d') }}","end": "{{ raffle.getEndDate|date('Y-m-d') }}","winners": "{{ raffle.getWinners }}","consos": "{{ raffle.getConsolations }}"}'>
         <td>{{ raffle.getRaffleTitle }}</td>
         <td>{{ raffle.getStartDate|date('Y-m-d') }} - {{ raffle.getEndDate|date('Y-m-d') }}</td>
         <td>{{ raffle.getWinners|number_format }} person(s)</td>

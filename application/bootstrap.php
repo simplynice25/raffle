@@ -34,6 +34,8 @@ $app['translator'] = $app->share($app->extend('translator', function($translator
 
 $app["twig"] = $app->share($app->extend("twig", function (\Twig_Environment $twig, Silex\Application $app) {
     $twig->addExtension(new custom_twig\Captcha($app));
+    $twig->addExtension(new custom_twig\DueRaffles($app));
+    $twig->addExtension(new custom_twig\Suffix($app));
 
     return $twig;
 }));
@@ -77,18 +79,42 @@ $app['swiftmailer.options'] = $mail_conf;
 $app['locale'] = 'en';
 
 /* Get raffles for navbar */
-$raffleData = array();
-$raffles = Tools::findBy($app, '\Raffles', array('raffle_status' => 1), array('created_at' => 'DESC'));
+	$now = new \DateTime();
+	$raffleData = array();
+	$sql = "SELECT r FROM models\Raffles r WHERE
+			r.raffle_status = 1 AND r.end_date >= :now
+			ORDER BY r.created_at DESC";
 
-foreach ($raffles as $raffle)
-{
-	$raffleData[] = array($raffle->getId(), $raffle->getRaffleTitle());
-}
+			$query = $app['orm.em']->createQuery($sql);
+	        $query->setParameter("now", $now->format('Y-m-d'));
+	        $raffles = $query->getResult();
 
-$app['session']->set('raffleNavs', $raffleData);
+	foreach ($raffles as $raffle)
+	{
+		$raffleData[] = array($raffle->getId(), $raffle->getRaffleTitle());
+	}
+
+	$app['session']->set('raffleNavs', $raffleData);
+	
+	unset($sql);
+	unset($raffles);
 /* End of getting raffles for navbar */
 
+/* Get due raffles today */
+    $qb = $app['orm.em']->createQueryBuilder();
+    $qb->select('count(table)')
+        ->from('models\Raffles', 'table')
+        ->where('table.raffle_status = 1')
+        ->andWhere('table.end_date = :now')
+        ->setParameter('now', $now->format('Y-m-d'));
+
+    $count = $qb->getQuery()->getSingleScalarResult();
+    
+    $app['session']->set('raffleDue', $count);
+/* End of getting due raffles today */
+
 $app->mount('/', user\UserProvider::routing($app));
+$app->mount('/r', user\Raffle::routing($app));
 $app->mount('/login', general\UserBridge::routing($app));
 $app->mount('/encoder', encoder\EncoderProvider::routing($app));
 $app->mount('/dashboard', admin\AdminProvider::routing($app));

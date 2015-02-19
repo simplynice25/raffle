@@ -17,6 +17,11 @@ class EncodedReceipts {
 	*/
 	private $raffle;
 
+    /** @ManyToOne(targetEntity="Users") 
+     *  @JoinColumn(name="user_id", referencedColumnName="id")
+    */
+    private $user;
+
 	/** @Column(type="string", nullable=true) **/
 	protected $receipt_number;
 
@@ -27,7 +32,7 @@ class EncodedReceipts {
     protected $email;
 
 	/** @Column(type="integer", nullable=true) **/
-	protected $view_status;
+	protected $view_status; // 1 = Deleted, 2 = Used, 5 = Active
 
 	/** @Column(type="datetime", nullable=true) **/
 	protected $created_at;
@@ -204,5 +209,28 @@ class EncodedReceipts {
     public function getRaffle()
     {
         return $this->raffle;
+    }
+
+    /**
+     * Set user
+     *
+     * @param \models\Users $user
+     * @return EncodedReceipts
+     */
+    public function setUser(\models\Users $user = null)
+    {
+        $this->user = $user;
+    
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return \models\Users 
+     */
+    public function getUser()
+    {
+        return $this->user;
     }
 }

@@ -123,4 +123,126 @@ class Users
 
 		return json_encode(array('message'=>'success'));
 	}
+
+	public function registrationProcess(Request $req, Application $app)
+	{
+		$roles = array('ROLE_USER', 'ROLE_ADMIN', 'ROLE_ENCODER');
+		$firstname = $req->get('firstname');
+		$lastname = $req->get('lastname');
+		
+		$email = $req->get('email');
+		$password = $req->get('password');
+		$c_password = $req->get('c_password');
+		$mobile = $req->get('mobile');
+		$birthday = $req->get('birthday');
+		$address = $req->get('address');
+
+		$role = $req->get('role');
+
+		$sign_up = (int) $req->get('sign_up');
+
+		if ( ! in_array($role, $roles))
+		{
+            $app['session']->getFlashBag()->set('message', 'invalid_role');
+            return Tools::redirect($app, 'users_overview');
+		}
+
+		if ($password != $c_password)
+		{
+            $app['session']->getFlashBag()->set('message', 'password_unmatch');
+            return Tools::redirect($app, 'users_overview');
+		}
+        
+        $emailAuthenticate = Tools::findOneBy($app, '\Users', array('email' => $email));
+        if ( ! empty($emailAuthenticate))
+        {
+            $app['session']->getFlashBag()->set('message', 'email_exist');
+            return Tools::redirect($app, 'users_overview');
+        }
+		
+		$password = $app['security.encoder.digest']->encodePassword($password, '');
+		
+		$user = new \models\Users;
+		$user->setEmail($email);
+		$user->setPassword($password);
+		$user->setRoles('ROLE_USER');
+		$user->setViewStatus($sign_up );
+		$user->setCreatedAt("now");
+		$user->setModifiedAt("now");
+		$app['orm.em']->persist($user);
+		$app['orm.em']->flush();
+		
+		$profile = new \models\Profiles;
+		$profile->setFirstname($firstname);
+		$profile->setLastname($lastname);
+		$profile->setMobile($mobile);
+		$profile->setBirthday(new \DateTime($birthday));
+		$profile->setAddress($address);
+		$profile->setUser($user);
+		$profile->setViewStatus(5);
+		$profile->setCreatedAt("now");
+		$profile->setModifiedAt("now");
+		$app['orm.em']->persist($profile);
+		$app['orm.em']->flush();
+
+		/* Redirect user if signed up and activated */
+		if ($sign_up === 5)
+		{
+			$app['session']->getFlashBag()->set('message', 'user_added');
+
+			return Tools::redirect($app, 'users_overview');
+		}
+
+        $msg = "confirm_failed";
+        $token = md5(uniqid()) . md5($email);
+		$generatedUrl = "http://$_SERVER[HTTP_HOST]".$app['url_generator']->generate('registration-process-confirm')."?token=" . $token;
+        $html = $app['twig']->render('general/emails/confirm-reg.twig', array( "url" => $generatedUrl, "fullname" => $firstname . " " . $lastname ));
+	
+        $message = \Swift_Message::newInstance()
+                    ->setSubject("Confirm Registration")
+                    ->setFrom(array("admin@raffle.com" => "Raffle Draw"))
+                    ->setTo(array($email))
+                    ->addPart( $html , 'text/html' );
+
+        if ( $app['mailer']->send($message))
+        {
+            $user->setToken($token);
+            $user->setModifiedAt("now");
+            $app['orm.em']->persist($user);
+            $app['orm.em']->flush();
+            
+            $msg = "confirm_sent";
+        }
+
+		$app['session']->getFlashBag()->set('message', $msg);
+
+		return Tools::redirect($app, 'users_overview');
+	}
+
+	public function activationProcess(Request $req, Application $app, $uid = null) 
+	{
+		$msg = 'invalid_uid';
+		if ( is_null($uid) || ! is_numeric($uid))
+		{
+			$app['session']->getFlashBag()->set('message', $msg);
+			return Tools::redirect($app, 'users_overview');
+		}
+
+		$user = Tools::findOneBy($app, '\Users', array('id' => $uid));
+
+		if (empty($user))
+		{
+			$app['session']->getFlashBag()->set('message', $msg);
+			return Tools::redirect($app, 'users_overview');
+		}
+
+		$user->setViewStatus(5);
+		$user->setToken(null);
+        $user->setModifiedAt("now");
+        $app['orm.em']->persist($user);
+        $app['orm.em']->flush();
+
+		$app['session']->getFlashBag()->set('message', 'user_activated');
+		return Tools::redirect($app, 'users_overview');
+	}
 }

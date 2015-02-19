@@ -42,7 +42,7 @@ class UserBridge {
         
         if ($app['security']->isGranted("ROLE_ADMIN"))
         {
-            return $app->redirect($app['url_generator']->generate("admin_overview"));
+            return $app->redirect($app['url_generator']->generate("dashboard"));
         }
         
         if ($app['security']->isGranted("ROLE_USER"))
@@ -70,8 +70,8 @@ class UserBridge {
 		);
 
 		/* Validate OR # */
-		$validateORNum = Tools::findBy($app, '\EncodedReceipts', array('receipt_number' => $preRegData['or_num']));
-		if (empty($validateORNum))
+		$validateORNum = Tools::findOneBy($app, '\EncodedReceipts', array('receipt_number' => $preRegData['or_num']));
+		if (empty($validateORNum) || ! empty($validateORNum) && $validateORNum->getViewStatus() == 2)
 		{
             $app['session']->getFlashBag()->set('message', 'invalid_receipt_number');
             return Tools::redirect($app, 'login');
@@ -91,6 +91,7 @@ class UserBridge {
 			'firstname' => $preReg['firstname'],
 			'lastname' => $preReg['lastname'],
 			'or_num' => $preReg['or_num'],
+			'message' => $app['session']->getFlashBag()->get('message'),
 		);
 
 		return $app['twig']->render('general/registration.twig', $view);
@@ -98,7 +99,6 @@ class UserBridge {
 	
 	public function registrationProcess(Request $req, Application $app)
 	{
-		/* TODO: Check for email duplicate */
 		$preReg = $app['session']->get('registration');
 		
 		$firstname = $req->get('firstname');
@@ -107,6 +107,7 @@ class UserBridge {
 		
 		$email = $req->get('email');
 		$password = $req->get('password');
+		$c_password = $req->get('c_password');
 		$mobile = $req->get('mobile');
 		$birthday = $req->get('birthday');
 		$address = $req->get('address');
@@ -116,6 +117,12 @@ class UserBridge {
         {
             $app['session']->getFlashBag()->set('message', 'email_exist');
             return Tools::redirect($app, 'login');
+        }
+
+        if ($password != $c_password)
+        {
+        	$app['session']->getFlashBag()->set('message', 'password_unmatch');
+        	return Tools::redirect($app, 'registration');
         }
 		
 		$password = $app['security.encoder.digest']->encodePassword($password, '');
@@ -143,6 +150,7 @@ class UserBridge {
 		$app['orm.em']->persist($profile);
 		$app['orm.em']->flush();
 		
+		/*
 		$receipt = new \models\Receipts;
 		$receipt->setReceiptNumber($orNum);
 		$receipt->setUser($user);
@@ -151,11 +159,19 @@ class UserBridge {
 		$receipt->setModifiedAt("now");
 		$app['orm.em']->persist($receipt);
 		$app['orm.em']->flush();
+		*/
+
+		/* Change status of receipt to USED */
+		$receiptStatus = Tools::findOneBy($app, '\EncodedReceipts', array('receipt_number' => $orNum));
+		$receiptStatus->setUser($user);
+		$receiptStatus->setViewStatus(2);
+		$app['orm.em']->persist($receiptStatus);
+		$app['orm.em']->flush();
         
         // Tools::autoLogin($app, $user->getEmail());
         $msg = "confirm_failed";
         $token = md5(uniqid()) . md5($email);
-		$generatedUrl = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]-confirm?token=" . $token;
+		$generatedUrl = "http://$_SERVER[HTTP_HOST]".$app['url_generator']->generate('registration-process-confirm')."?token=" . $token;
         $html = $app['twig']->render('general/emails/confirm-reg.twig', array( "url" => $generatedUrl, "fullname" => $firstname . " " . $lastname ));
 	
         $message = \Swift_Message::newInstance()
@@ -206,7 +222,7 @@ class UserBridge {
 	{
 		$msg = "reset_failed";
 		$email = $req->get('email');
-		$generatedUrl = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]-process";
+		$generatedUrl = "http://$_SERVER[HTTP_HOST]".$app['url_generator']->generate('reset-password-process');
 		
 		$user = Tools::findOneBy($app, "\Users", array("email" => $email, "view_status" => 5));
 		if ( ! empty($user))

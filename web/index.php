@@ -1,5 +1,4 @@
 <?php
-
 	define('ENVIRONMENT', 'development'); // development // production
 
 	if (defined('ENVIRONMENT'))

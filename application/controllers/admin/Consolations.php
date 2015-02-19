@@ -29,7 +29,7 @@ class Consolations
 			'message' => $app['session']->getFlashBag()->get('message'),
         );
         
-		return $app['twig']->render('dashboard/Consolations.twig', $view);
+		return $app['twig']->render('dashboard/consolations.twig', $view);
 	}
     
     public function consoPrizes(Request $req, Application $app)

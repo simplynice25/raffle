@@ -1,4 +1,113 @@
 {% extends 'layout.twig' %}
 
+{% block styles %}
+<style type="text/css">
+body{
+    background-color:#e4e4e4;
+    background:url('{{baseUrl}}img/bg_gradient.jpg') no-repeat center center,url('{{baseUrl}}img/bg_tile.jpg');
+}
+.shuffleTheater {
+    top: -50px;
+    padding: 50px 0 0px;
+    position:relative;
+
+    min-height: 170px;
+    text-align:  center;
+}
+.shuffleTheater span{
+    color: #555;
+    font-size: 58px;
+    
+    font-family:'Open Sans Condensed',sans-serif;
+    text-shadow:1px 1px 0 rgba(255,255,255,0.5);
+}
+</style>
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300" type="text/css" />
+{% endblock %}
+
 {% block content %}
+    <div class="col-lg-12">
+        <div class="row">
+        {% if hide is not defined %}
+        <div class="col-lg-6 col-lg-offset-3 shuffleTheater"><p><span>Raffle Draw.</span></p></div>
+        {% endif %}
+            <div class="col-lg-6">
+                {% if hide is defined %}
+                <div class="form-group">
+                    <label for="date">Filter raffle by end date:</label>
+                    <div class="input-group">
+                        <input type="date" id="date" name="date" class="form-control" value="{{ date }}" autofocus/>
+                        <span class="input-group-btn">
+                        <button class="btn btn-primary filter-raffle-date" type="button">Go!</button>
+                        </span>
+                    </div>
+                    <small style="color:red"><i class="fa fa-fw fa-exclamation-triangle"></i> Only Year and Month are being filtered.</small>
+                </div>
+                {% endif %}
+                <div class="form-group">
+                    <label for="">Raffles</label>
+                    <select name="raffles" id="raffle" class="form-control">
+                        {% if archives is defined and archives|length > 0 %}
+                        <option value="0">Select raffle to view</option>
+                        {% for archive in archives %}
+                        <option value="{{archive.getId}}">{{ archive.getRaffleTitle }}</option>
+                        {% endfor %}
+                        {% else %}
+                        <option value="0">No raffle</option>
+                        {% endif %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="winner">Winners</label>
+                    <select name="winners" id="winner" class="form-control w-c" data-type="1" disabled>
+                        <option value="0">Select winner(s) to view</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="conso">Consolations</label>
+                    <select name="consos" id="conso" class="form-control w-c" data-type="2" disabled>
+                        <option value="0">Select conso(s) to view</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-lg-6 load-wc-info">
+                <h1 style="color:red"><i class="fa fa-fw fa-exclamation-triangle"></i> <i>Note:</i></h1>
+                <div class="alert alert-warning">Select raffle to view prizes of winners and consos.</div>
+            </div>
+        </div>
+    <div style="width:100%;padding:0;margin:0;min-height:250px;"></div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script type="text/javascript">
+        var date_ = $('#date'),
+            filter_raffle_date = $('.filter-raffle-date');
+
+        filter_raffle_date.click(function(){
+            var date = date_.val().split('-'),
+                year = date[0],
+                month = date[1],
+                url_ = "{{ app.request.uri }}".split('?');
+
+                url_ = (!url_[0]) ? "{{ app.request.uri }}" : url_[0];
+            
+            window.location.href = url_+"?year="+year+"&month="+month;
+            return true;
+        })
+    </script>
+    <script src="{{baseUrl}}plugins/shuffle/jquery.shuffleLetters.js"></script>
+    <script type="text/javascript">
+        var realNames = new Array(),
+            noShuffle = 'false';
+
+        {% if hide is defined %}
+            noShuffle = true;
+        {% endif %}
+
+        {% for name in names %}
+        realNames.push("{{ name['fname'] }} {{ name['lname'] }}");
+        {% endfor %}
+    </script>
+    <script src="{{baseUrl}}js/jq.raffle.js"></script>
 {% endblock %}

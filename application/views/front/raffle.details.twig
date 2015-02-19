@@ -1,5 +1,6 @@
 {% extends 'layout.twig' %}
 
+{% set raffle_id = (raffle is defined and raffle.getId is defined) ? raffle.getId : null %}
 {% set title = (raffle is defined and raffle.getRaffleTitle is defined) ? raffle.getRaffleTitle : null %}
 {% set desc = (raffle is defined and raffle.getRaffleDescription is defined) ? raffle.getRaffleDescription : null %}
 {% set winners = (raffle is defined and raffle.getWinners is defined) ? raffle.getWinners : null %}
@@ -8,39 +9,93 @@
 {% block content %}
 	<div class="col-lg-12">
 		<div class="row">
-			<div class="col-lg-12">
-				<div class="form-group">
-					<label for="winners">Winners</label>
-					<select id="winners" class="form-control">
-					{% if winners > 0 %}
-						{% for i in 1..winners %}
-						<option value="{{ i }}">{{ i }}</option>
-						{% endfor %}
-						{% else %}
-						<option value="0">No winners</option>
-					{% endif %}
-					</select>
+				<div class="row">
+                    <div class="col-lg-5">
+                        <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label for="winners">Winners</label>
+                                <select id="winners" class="form-control w-c" data-type="1" autofocus>
+                                <option value="0">Select winner(s)</option>
+                                {% if winners > 0 %}
+                                    {% for i in 1..winners %}
+                                    <option value="{{ i }}">{{ i|suffix }}</option>
+                                    {% endfor %}
+                                {% else %}
+                                    <option value="0">No winners</option>
+                                {% endif %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="consos">Consolations</label>
+                                <select id="consos" class="form-control w-c" data-type="2">
+                                <option value="0">Select conso(s)</option>
+                                {% if consos > 0 %}
+                                    {% for i in 1..consos %}
+                                    <option value="{{ i }}">{{ i|suffix }}</option>
+                                    {% endfor %}
+                                {% else %}
+                                    <option value="0">No consos</option>
+                                {% endif %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                        <div class="row">
+                            <div class="col-lg-12 wc-theater">
+                                <div class="theater"></div>
+                            </div>
+                            {#
+                            <div class="col-lg-12 wc-theater">
+                                <div class="theater"></div>
+                            </div>
+                            #}
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-7" style="min-height:400px">
+                        <h1>{{ title }}</h1>
+                        {{ desc|raw }}
+                    </div>
 				</div>
-				<div class="form-group">
-					<label for="consos">Consolations</label>
-					<select id="consos" class="form-control">
-					{% if consos > 0 %}
-						{% for i in 1..consos %}
-						<option value="{{ i }}">{{ i }}</option>
-						{% endfor %}
-						{% else %}
-						<option value="0">No consos</option>
-					{% endif %}
-					</select>
-				</div>
-				<h1>Winner Prizes</h1>
-				<hr/>
-				<h1>Consolation Prizes</h1>
-				<hr/>
-				<h1>{{ title }}</h1>
-				{{ desc|raw }}
-				<hr/>
-			</div>
 		</div>
 	</div>
+{% endblock %}
+
+{% block scripts %}
+    <script type="text/javascript">
+    	var wc_ = $('.w-c'),
+    		winners_ = $('#winners'),
+    		consos_ = $('#consos'),
+    		theater_ = '.wc-theater';
+
+    	wc_.change(function(){
+    		var self = $(this),
+    			place = self.val(),
+    			type = self.data('type'),
+    			text = (type == "1") ? 'winner' : 'conso',
+    			selected = (type == "1") ? winners_ : consos_,
+    			//theater = (type == "1") ? $(theater_ + ':first-child .theater') : $(theater_ + ':last-child .theater');
+                theater = $(theater_ + ':first-child .theater');
+
+    			//console.log(text);
+
+    		theater.html('<h3><i class="fa fa-fw fa-spin fa-circle-o-notch"></i> Loading ' + text + ' informations...</h3>');
+            (type == 1) ? consos_.prop('selectedIndex',0) : winners_.prop('selectedIndex',0) ;
+
+        	var data = {place: place, type: type, raffle: {{raffle_id}}};
+
+	        $.get('{{ path('get-prizes') }}', data)
+	        .done(function( data )
+	        {
+	            theater.html( data );
+				$('html,body').animate({scrollTop: theater.offset().top}, 'slow');
+	        })
+	        .fail(function()
+	        {
+	            console.log('Failed to process ...');
+	        })
+    	})
+    </script>
 {% endblock %}

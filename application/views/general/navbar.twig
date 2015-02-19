@@ -1,7 +1,9 @@
+{% set viewing = (viewing is defined) ? viewing : 0 %}
 {% set userSess = app.session.get('credentials') %}
 {% set username = (userSess is defined and userSess is not empty and userSess[0] is not empty) ? userSess[0] : null %}
 {% set role = (userSess is defined and userSess is not empty and userSess[1] is not empty) ? userSess[1] : null %}
 {% set raffles = app.session.get('raffleNavs') %}
+{% set dues = app.session.get('raffleDue') %}
     <!-- Static navbar -->
     <nav class="navbar navbar-default navbar-static-top" role="navigation">
       <div class="container">
@@ -12,26 +14,32 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="{{ baseUrl }}">{{ 'brandName'|trans }}</a>
+          <a class="navbar-brand" href="{{ baseUrl }}" style="color:red">{{ 'brandName'|trans }}</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li><a href="#">About</a></li>
-            <li><a href="#">Mechanics</a></li>
+            <li{% if viewing == 2 %} class="active"{% endif %}><a href="{{ path('about-us') }}">About</a></li>
+            <li{% if viewing == 3 %} class="active"{% endif %}><a href="{{ path('contact') }}">Contact</a></li>
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Raffles & Prizes <span class="caret"></span></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="label label-success" style="top:-5px;position:relative">Active</span> <span{% if viewing == 4 %} style="color:#333"{% endif %}>Raffles &amp; Prizes</span> <span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
-                {% for raffle in raffles %}
-                <li><a href="{{ path('raffle_details', {id: raffle[0]}) }}">{{ raffle[1] }}</a></li>
-                {% endfor %}
+                {% if raffles|length > 0 %}
+                  {% for raffle in raffles %}
+                  <li><a href="{{ path('raffle_details', {id: raffle[0]}) }}">{{ raffle[1] }}</a></li>
+                  {% endfor %}
+                {% else %}
+                  <li><a href="javascript:;">No active raffle</a></li>
+                {% endif %}
               </ul>
             </li>
-            <li><a href="#">Contact</a></li>
-            <li><a href="#">Developers</a></li>
+            <li{% if viewing == 5 %} class="active"{% endif %}><a href="{{ path('archives') }}"><span class="label label-default" style="top:-5px;position:relative">Archive</span>Raffles &amp; Prizes</a></li>
+            <li{% if viewing == 6 %} class="active"{% endif %}><a href="{{ path('developers') }}">Developers</a></li>
           </ul>
           {% if userSess is defined and userSess is not empty and userSess[0] is not empty %}
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="#"><span class="badge">0</span></a></li>
+            {% if role is not null and role == 'ROLE_ADMIN' %}
+            <li><a href="#" data-toggle="modal" data-target="#raffleDraw"><span class="badge alert-danger">{{ dues }} raffle draw!</span></a></li> {# {{ 'now'|date('M j, Y') }}:  #}
+            {% endif %}
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-fw fa-user"></i> {{ username }} <span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
@@ -59,3 +67,6 @@
         </div><!--/.nav-collapse -->
       </div>
     </nav>
+    {% if role is not null and role == 'ROLE_ADMIN' %}
+    {% include 'general/includes/raffle.notification.admin.twig' only %}
+    {% endif %}

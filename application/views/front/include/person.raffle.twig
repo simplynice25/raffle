@@ -1,0 +1,24 @@
+<div class="row">
+{% if profile is defined and profile is not null %}
+    <h3><i class="fa fa-fw fa-user" style="color:red"></i> {{ profile.getFirstname }} {{ profile.getLastname }}</h3><hr>
+{% endif %}
+{% if prizes is defined and prizes is not null %}
+    <h3><i class="fa fa-fw fa-trophy" style="color:red"></i> Prizes</h3>
+    {% if prizes|length > 0 %}
+        {% for prize in prizes %}
+          <div class="col-sm-6 col-md-4">
+            <div class="thumbnail">
+              <img src="{{ path('img-thumb', {params: '260x260c', q: prize.getPrize.getPrizeImage }) }}" alt="{{ prize.getPrize.getPrizeTitle }}" />
+              <div class="caption">
+                <h3>{{ prize.getPrize.getPrizeTitle }}</h3>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+    {% else %}
+    <div class="col-lg-12">
+          <div class="alert alert-warning"><p><i class="fa fa-fw fa-exclamation-triangle"></i> No prize!</p></div>
+    </div>
+    {% endif %}
+{% endif %}
+</div>

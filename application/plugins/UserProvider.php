@@ -20,8 +20,11 @@ class UserProvider implements UserProviderInterface
 
 	public function loadUserByUsername($username, $byPassCaptcha = NULL)
     {
+        $login_url = $this->app['url_generator']->generate('login');
+
 		if (isset($_POST["recaptcha_response_field"]) && is_null($byPassCaptcha))
 		{
+            $islogin = true;
 			$privatekey = "6Ldy3eISAAAAAHtuTiDny2buEpUOVcM6J_YUXyD0";
 			require_once(__DIR__ . '/recaptcha/recaptchalib.php');
 	
@@ -34,19 +37,22 @@ class UserProvider implements UserProviderInterface
 				$error = "The CAPTCHA wasn't entered correctly. Please try it again.";
 				$this->app['session']->getFlashBag()->set('err_', array($error, 'login_passed'));
 
-				$url = $this->app['url_generator']->generate('login');
-				return $this->app->redirect($url);
+				return $this->app->redirect($login_url);
 			}
 		}
 
 		$user = $this->app['orm.em']->getRepository('models\Users')->findOneBy(array('email' => $username, 'view_status' => 5));
 
-		if (!is_object($user)) {
+		if ( ! is_object($user))
+        {
+            $this->app['session']->getFlashBag()->set('login', array('fail'));
 			throw new UsernameNotFoundException(sprintf('Username "%s" does not exist.', $username));
 		}
 
-		$this->app['session']->getFlashBag()->set('err_', array('null', 'login_passed'));
+        if (isset($islogin))
+            $this->app['session']->getFlashBag()->set('role', array($user->getRoles()));
 
+        $this->app['session']->getFlashBag()->set('err_', array('null', 'login_passed'));
 		return new User($user->getEmail(), $user->getPassword(), explode(',', $user->getRoles()), true, true, true, true);
     }
 

@@ -17,9 +17,9 @@
             data_ = parent_inv.data('raffle'),
             actionAttr = self.find('form').data('action');
 
-       self.find('form').find("textarea, input[type=text], input[type=date], input[type=number]").val("");
+        self.find('form').find("textarea, input[type=text], input[type=date], input[type=number]").val("");
         for (instance in CKEDITOR.instances){
-           CKEDITOR.instances[instance].setData(" ");
+           //CKEDITOR.instances[instance].setData(" ");
         }
 
        if (data_)
@@ -27,11 +27,14 @@
            var action_ = actionAttr + '&id=' + data_.id;
            self.find('form').attr('action', action_);
            self.find('form input[name=title]').val(data_.title);
-           self.find('form textarea[name=desc]').val(data_.desc);
+           //self.find('form textarea[name=desc]').val(unescape(data_.desc));
            self.find('form input[name=start]').val(data_.start);
            self.find('form input[name=end]').val(data_.end);
            self.find('form input[name=winners]').val(data_.winners);
            self.find('form input[name=consolations]').val(data_.consos);
+           
+           var desc_ = unescape(data_.desc);
+           CKEDITOR.instances['desc'].setData(desc_);
            
            return true;
        }
@@ -110,14 +113,22 @@
                     invoker = $(e.relatedTarget),
                     modalForm = self.find('form'),
                     modalFormAction = modalForm.data('action'),
-                    imgMsgObj = self.find('.text-danger');
+                    imgMsgObj = self.find('.text-danger'),
+                    title = invoker.data('title'),
+                    desc = invoker.data('desc');
                 
                 if (invoker.data('type') == 1){
                     modalForm.attr('action', modalFormAction);
                     imgMsgObj.addClass('hide');
+                    $(funcConf.prizeModal + ' input[name=title]').val('');
+                    $(funcConf.prizeModal + ' textarea[name=desc]').val('');
+                    $(funcConf.prizeModal + ' input[name=image]').attr('required', true);
                 } else {
                     modalForm.attr('action', modalFormAction + '?id=' + invoker.data('id'));
                     imgMsgObj.removeClass('hide');
+                    $(funcConf.prizeModal + ' input[name=title]').val(title);
+                    $(funcConf.prizeModal + ' textarea[name=desc]').val(desc);
+                    $(funcConf.prizeModal + ' input[name=image]').attr('required', false);
                 }
             })
         },

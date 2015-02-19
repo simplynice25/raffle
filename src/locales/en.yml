@@ -1,5 +1,5 @@
 #General
-brandName: Raffle
+brandName: Sherie Anne's
 
 #Reset Password
 reset_failed: Failed to send email for password reset or the account is deleted, or not yet activated.
@@ -11,6 +11,7 @@ reset_success: Password reset successful!
 confirm_failed: Failed to send email for account confirmation.
 confirm_sent: Email sent for account confirmation.
 invalid_confirm_token: Link for account confirmation is invalid.
+password_unmatch: Password did not match.
 
 #Settings
 password_not_match: Password did not match.
@@ -28,6 +29,7 @@ raffle_update_success: Raffle updated.
 cannot_activate_due_to_end_date: Cannot activate raffle due to end date entry, please change the end date of this raffle.
 raffle_date_greater_than: Raffle end date should be greater than the date of the start and date today.
 invalid_raffle_id: Invalid raffle ID.
+raffle_generated: Winners and Consos successfully generated.
 
 #Winners
 invalid_file_extension: Invalid file extension.
@@ -41,3 +43,9 @@ receipt_email_sent: Link on where to register sent to client email address.
 receipt_email_failed: Failed to send email to client email address.
 receipt_number_exist: Receipt number already exist.
 invalid_receipt_number: Invalid receipt number, please try again.
+
+#Admin ( User management )
+user_added: User has been added successfully.
+invalid_role: User role is invalid.
+invalid_uid: Invalid User ID.
+user_activated: User activated.

@@ -1,2 +1,18 @@
-slot machine
-picking of winners/consos
+1freehosting.com
+charlotte.gatchalian@yahoo.com - Charlotte2015
+
+Subdomain account:
+raffle.fulba.com - password
+
+FTP:
+Host: raffle.fulba.com
+IP: 31.170.167.239
+Port: 21
+Username: u548587474
+Password: password
+
+MYSQL:
+host: mysql.1freehosting.com
+username: u548587474_db
+database: u548587474_db
+password: password

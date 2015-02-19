@@ -20,8 +20,10 @@
 			<div class="btn-group" role="group" aria-label="...">
 			{% if user.getViewStatus == 5 %}
 			  <button type="button" class="btn btn-xs btn-success btn-ban" data-status="1"{{ userActionStatus }}><i class="fa fa-fw fa-ban"></i> Ban</button>
-			  {% else %}
+			  {% elseif user.getViewStatus == 1 %}
 			  <button type="button" class="btn btn-xs btn-danger btn-ban" data-status="5"{{ userActionStatus }}><i class="fa fa-fw fa-ban"></i> Unban</button>
+			  {% elseif user.getViewStatus == 2 %}
+			  <a href="{{ path('admin_user_activation', { uid: user.getId }) }}" class="btn btn-xs btn-warning">ACTIVATE</a>
 			{% endif %}
 			</div>
 		</td>

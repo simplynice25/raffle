@@ -1,0 +1,52 @@
+{% set imgNum = 6 %}
+{% set caption = {'0' : 'Grocery', '1' : 'Department Store', '2' : 'Food Bar', '3' : 'Grocery', '4' : 'Pharmacy', '5' : 'Grocery', '6' : 'Sherie Anne\'s'} %}
+{% extends 'layout.twig' %}
+
+{% block content %}
+<div class="col-lg-12">
+    <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+      <!-- Indicators -->
+      <ol class="carousel-indicators">
+        {% for i in 0..imgNum %}
+        <li data-target="#carousel-example-generic" data-slide-to="{{i}}" class="{% if i == 0 %}active{% endif %}"></li>
+        {% endfor %}
+      </ol>
+
+      <!-- Wrapper for slides -->
+      <div class="carousel-inner" role="listbox">
+        {% for i in 0..imgNum %}
+        <div class="item{% if i == 0 %} active{% endif %}">
+          <img src="{{ path('img-thumb', {params: '1140x460c', q: i~'-contact-slideshow.jpg' }) }}" alt="..." />
+          <div class="carousel-caption">
+            {{ caption[i] }}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Controls -->
+      <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+      </a>
+      <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+      </a>
+    </div>
+    <div class="row">
+      <div class="col-lg-6">
+        <h1><i class="fa fa-fw fa-location-arrow"></i> Location</h1>
+        <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d3926.796042711228!2d122.864538!3d10.197212!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x33aea78898710737%3A0x25f76fa042efa424!2sSherie+Anne&#39;s+Department+Store+%26+Supermart!5e0!3m2!1sen!2sph!4v1423362920645" width="500" height="300" frameborder="0" style="border:0"></iframe>
+      </div>
+      <div class="col-lg-6">
+        <h1><i class="fa fa-fw fa-users"></i> Contact us</h1>
+        <p><i class="fa fa-lg fa-fw fa-phone-square"></i> (034) 742-89-80</p>
+        <p><i class="fa fa-lg fa-fw fa-phone-square"></i> (034) 743-78-65</p>
+        <p><a href="mailto:sherieanne@gmail.com"><i class="fa fa-lg fa-fw fa-envelope-square"></i> sherieanne@gmail.com</a></p>
+        <p><a href="mailto:sherieanne@yahoo.com"><i class="fa fa-lg fa-fw fa-envelope-square"></i> sherieanne@yahoo.com</a></p>
+      </div>
+    </div>
+      <div style="width:100%;padding:0;margin:0;min-height:150px;"></div>
+</div>
+{% endblock %}
